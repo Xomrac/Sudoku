@@ -1,0 +1,171 @@
+@startuml
+
+hide empty members
+skinparam linetype ortho
+
+
+Package Themes
+{
+    class Theme<<S,violet>>
+    {
+        -currentCellColor : Color
+        -sameValueColor : Color
+        -relativesColor : Color
+    }
+}
+
+
+Package Grid
+{
+    class GridBuilder <<M, yellow>>
+    {
+    }
+    class GridManager <<M, yellow, ServiceLocator>>
+    {
+       - grid : CellController[,]
+       - placedNumbers : Dictionary <Int, Int[,]>
+    }
+    
+    class RowsChecker<<M,yellow>>
+    {
+        -rows : Dictionary <Int, List<CellsController>)>
+    }
+    
+    class ColumnsChecker<<M,yellow>>
+    {
+        -columns : Dictionary <Int, List<CellsController>)>
+    }
+    
+    class SquaresChecker<<M,yellow>>
+    {
+        -squares : Dictionary <Int, List<CellsController>)>
+    }
+    
+    class CellsHighlighter<<M, yellow, ServiceComponents>>
+    {
+        - colorPalette : Theme
+        - HighlightCells (List<CellsController>) : void
+    }
+    
+    interface ICheckable
+    {
+        + Check (int) : bool
+    }
+    
+    Package Cells
+    {
+        class CellNode
+        {
+            - coords : (row: int, column : int, square : int)
+        }
+        
+        class CellManager <<M, yellow, ServiceLocator>>
+        {
+            - node : CellNode
+            - correctNumber : int
+            - currentNumber : int?
+            - displayText : TextMeshProUGUI
+            - background : Image
+        }
+        
+        class CellNotesController <<M, yellow, ServiceComponent>>
+        {
+            - notes : Dictionary <<int, TextMeshProUGUI>>
+            + ToggleNote(int) : void
+        }
+    }
+
+}
+
+
+
+Package Stats
+{
+
+    class StatsManager <<M, yellow, ServiceLocator>>
+    {
+    }
+    class ScoreController <<M, yellow, ServiceComponent>>
+    {
+    }
+    class GameTimeController <<M, yellow, ServiceComponent>>
+    {
+    }
+    class ErrorsController <<M, yellow, ServiceComponent>>
+    {
+    }
+    
+}
+
+Package Actions
+{
+    class ActionsController <<M, yellow>>
+    {
+    }
+    
+    class NumberSelector <<M, yellow>>
+    {
+    }
+}
+
+Package StateMachine
+{
+    enum GameStates
+    {
+    
+    }
+    
+    class GameStateManager <<M, yellow>>
+    {
+    
+    }
+}
+
+Package Settings
+{
+    class DifficultySettings<<S,violet>>
+    {
+        +difficultyDisplayName : string
+        +maxErrors : int
+        +timeLimit : float
+        +filledSquares : int
+    }
+}
+
+Package Debug
+{
+    class DebugManager<<M, yellow, Singleton>>
+    {
+    }
+}
+
+Package General 
+{
+
+    class gameManager<<M, yellow>>
+    {
+        +difficulty : DifficultySettings
+    }
+    
+    class SelectionManager<<M, yellow, Singleton>>
+    {
+        +CurrentSelectedCell : CellController
+    }
+}
+
+Package Time
+{
+    class TimeController <<M, yellow>>
+    {
+        + <<event>> Tick : Action<float>
+        + <<event>> Paused : Action<float>
+        + <<event>> Resumed : Action<float>
+        - current : float
+        + Pause() : void
+        + Resume() : void
+        + GetCurrent() : float
+    }
+}
+
+
+@enduml
