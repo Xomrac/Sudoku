@@ -23,8 +23,21 @@ public class GridManager : SerializedMonoBehaviour
 	[SerializeField] private RectTransform gridParent;
 
 	[SerializeField] [HideInInspector] private CellController[,] cells;
+	public CellController[,] Cells => cells;
 
 	private Stopwatch creationStopWatch;
+
+
+	private Dictionary<int, List<CellController>> rows;
+	public Dictionary<int, List<CellController>> Rows => rows;
+
+	private Dictionary<int, List<CellController>> columns;
+	public Dictionary<int, List<CellController>> Columns => columns;
+
+	private Dictionary<int, List<CellController>> squares;
+	public Dictionary<int, List<CellController>> Squares => squares;
+
+	public event Action GridReady; 
 
 	#endregion
 
@@ -33,17 +46,29 @@ public class GridManager : SerializedMonoBehaviour
 	[Button]
 	private void FetchCells()
 	{
+		rows = new Dictionary<int, List<CellController>>();
+		columns = new Dictionary<int, List<CellController>>();
+		squares = new Dictionary<int, List<CellController>>();
+		for (int i = 0; i < GRID_DIMENSION; i++)
+		{
+			rows.Add(i,new List<CellController>());
+			columns.Add(i,new List<CellController>());
+			squares.Add(i,new List<CellController>());
+		}
 		cells = new CellController[GRID_DIMENSION, GRID_DIMENSION];
 		var controllers = gridParent.GetComponentsInChildren<CellController>();
 		for (int i = 0; i < controllers.Length; i++)
 		{
 			int row = Mathf.FloorToInt(i / GRID_DIMENSION);
 			int col = i % GRID_DIMENSION;
-			int square = Mathf.FloorToInt(row / SQUARES_DIMENSION) + Mathf.FloorToInt(col / SQUARES_DIMENSION) + (2 * row / SQUARES_DIMENSION);
-
-			CellController currentController = controllers[i];
-			currentController.Init(new CellNode(i, row, col, square));
-			cells[row, col] = currentController;
+			int square = Mathf.FloorToInt(row / SQUARES_DIMENSION) + Mathf.FloorToInt(col / SQUARES_DIMENSION) + (2 * Mathf.FloorToInt(row / SQUARES_DIMENSION));
+			
+			rows[row].Add(controllers[i]);
+			columns[col].Add(controllers[i]);
+			squares[square].Add(controllers[i]);
+			
+			controllers[i].Init(new CellNode(i, row, col, square));
+			cells[row, col] = controllers[i];
 		}
 	}
 
@@ -166,9 +191,12 @@ public class GridManager : SerializedMonoBehaviour
 
 	#region Methods
 
-	private void Start()
+	private IEnumerator Start()
 	{
 		CreateGrid();
+		// gridParent.gameObject.SetActive(false);
+		yield return null;
+		// gridParent.gameObject.SetActive(true);
 	}
 
 	[Button]
@@ -180,6 +208,7 @@ public class GridManager : SerializedMonoBehaviour
 		PopulateCells();
 		EraseCells(numbersToRemove);
 		Debug.Log($"Grid created in {creationStopWatch.ElapsedMilliseconds}ms");
+		GridReady?.Invoke();
 		creationStopWatch.Stop();
 	}
 

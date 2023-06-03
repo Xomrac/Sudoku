@@ -6,18 +6,18 @@ using UnityEngine;
 
 
 [Serializable]
-public struct CellNode
+public class CellNode
 {
-    [SerializeField] [ReadOnly] private int cellIndex;
+    [SerializeField]  private int cellIndex=10;
     public int CellIndex => cellIndex;
     
-    [SerializeField][ReadOnly] private int cellRow;
+    [SerializeField] private int cellRow=20;
     public int CellRow => cellRow;
 
-    [SerializeField][ReadOnly] private int cellColumn;
+    [SerializeField] private int cellColumn=30;
     public int CellColumn => cellColumn;
     
-    [SerializeField][ReadOnly] private int cellSquare;
+    [SerializeField] private int cellSquare=40;
     public int CellSquare => cellSquare;
 
     public CellNode(int index, int row, int column, int square)
