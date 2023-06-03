@@ -43,6 +43,8 @@ public class GridManager : SerializedMonoBehaviour
 
 	#region Fetching
 
+#if UNITY_EDITOR
+	
 	[Button]
 	private void FetchCells()
 	{
@@ -71,6 +73,7 @@ public class GridManager : SerializedMonoBehaviour
 			cells[row, col] = controllers[i];
 		}
 	}
+#endif
 
 	#endregion
 

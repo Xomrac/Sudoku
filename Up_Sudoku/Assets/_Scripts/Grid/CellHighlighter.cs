@@ -22,6 +22,7 @@ namespace _Scripts.Grid
 
 		private void HighLightCell(CellController selectedCell)
 		{
+			
 			ResetColors();
 			HighlightRowsColumnsSquares(selectedCell);
 			HiglightSameValue(selectedCell);

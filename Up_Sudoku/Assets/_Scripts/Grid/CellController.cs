@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using _Scripts.Grid;
 using TMPro;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -22,8 +21,8 @@ public class CellController : ServiceLocator, IPointerDownHandler
         set{
             currentValue = value;
             valueText.text = value == null ? "" : $"{value}";
-            completed = value == correctValue;
-            valueText.color = completed ? Color.green : Color.red;
+            currentlyCompleted = value == correctValue;
+            valueText.color = currentlyCompleted ? Color.green : Color.red;
         }
         get => currentValue;
     }
@@ -36,8 +35,13 @@ public class CellController : ServiceLocator, IPointerDownHandler
     [SerializeField] private TextMeshProUGUI valueText;
     [SerializeField] private Image background;
 
-    private bool completed;
-    public bool Completed => completed;
+    private bool completedAFirstTime;
+    public bool CompletedAFirstTime => completedAFirstTime;
+
+    private bool currentlyCompleted;
+    public bool CurrentlyCompleted => currentlyCompleted;
+
+    public bool selected;
 
     #if UNITY_EDITOR
     public void Init(CellNode newNode)
@@ -46,7 +50,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
         gameObject.name = $"[{node.CellRow},{node.CellColumn},{node.CellSquare}]";
         correctValue = 0;
         EditorUtility.SetDirty(this);
-        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
     }
     #endif
 
@@ -66,7 +70,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
         correctValue = value;
         CurrentValue = correctValue;
         valueText.color = Color.black;
-        completed = true;
+        currentlyCompleted = true;
     }
 
     public void SetBackgroundColor(Color backgroundColor)
@@ -76,7 +80,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log($"clicked cell {gameObject.name}");
+        selected = false;
         Clicked?.Invoke(this);
     }
 
