@@ -7,28 +7,28 @@ namespace _Scripts.Grid
 
 	public class GameManager : Singleton<GameManager>
 	{
+		public GameSettings gameSettings;
 		public CellController currentSelectedCell;
+
+		public bool IsZenMode => gameSettings.GameMode == GameMode.Zen;
 
 		private void OnEnable()
 		{
 			CellController.Clicked += SelectCell;
-			NumberSelector.Selected += PlaceValue;
+			ErrorsManager.ErrorMade += CheckForGameOver;
 		}
 		private void OnDisable()
 		{
 			CellController.Clicked -= SelectCell;
-			NumberSelector.Selected -= PlaceValue;
+			ErrorsManager.ErrorMade -= CheckForGameOver;
+
 		}
-		private void PlaceValue(int value)
-		{
-			if (currentSelectedCell==null || currentSelectedCell.CurrentlyCompleted) return;
-			currentSelectedCell.CurrentValue = value;
-		}
+		
 
 		private void Erase()
 		{
 			if (currentSelectedCell==null || currentSelectedCell.CurrentlyCompleted) return;
-			currentSelectedCell.CurrentValue = null;
+			currentSelectedCell.RemoveValue();
 		}
 
 	
@@ -36,6 +36,19 @@ namespace _Scripts.Grid
 		private void SelectCell(CellController cell)
 		{
 			currentSelectedCell = cell;
+		}
+
+		private void CheckForGameOver(int amountOfErrors)
+		{
+			if (amountOfErrors >= gameSettings.MaxErrors)
+			{
+				Debug.Log("GAME OVER!");
+			}
+		}
+
+		public void CheckForVictory()
+		{
+			
 		}
 	}
 

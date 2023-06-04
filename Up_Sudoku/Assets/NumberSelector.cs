@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class NumberSelector : MonoBehaviour
 {
-   public static event Action<int> Selected;
+   public static  Action<int> Selected;
 
    [SerializeField] private int selectableNumber;
 

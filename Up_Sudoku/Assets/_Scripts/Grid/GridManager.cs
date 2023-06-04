@@ -226,7 +226,6 @@ public class GridManager : SerializedMonoBehaviour
 		foreach (CellController cell in cells)
 		{
 			cell.SetInitialValue(0);
-			cell.EraseValue();
 		}
 	}
 
@@ -236,7 +235,7 @@ public class GridManager : SerializedMonoBehaviour
 		for (int i = 0; i < amount; i++)
 		{
 			var randomIndex = Random.Range(0, availableCells.Count);
-			availableCells[randomIndex].CurrentValue = null;
+			availableCells[randomIndex].RemoveValue();
 			availableCells.RemoveAt(randomIndex);
 		}
 	}
