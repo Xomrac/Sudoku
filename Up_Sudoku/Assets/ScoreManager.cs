@@ -1,4 +1,5 @@
 using System;
+using _Scripts.Grid;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -13,11 +14,19 @@ public class ScoreManager : MonoBehaviour
 	private void OnEnable()
 	{
 		CellController.ValueInsterted += UpdateScore;
+		GameManager.GameResetted += OnGameResetted;
 	}
 
 	private void OnDisable()
 	{
 		CellController.ValueInsterted -= UpdateScore;
+		GameManager.GameResetted -= OnGameResetted;
+
+	}
+
+	private void OnGameResetted()
+	{
+		currentScore = 0;
 	}
 
 	private void UpdateScore(bool cellHasCorrectValue)

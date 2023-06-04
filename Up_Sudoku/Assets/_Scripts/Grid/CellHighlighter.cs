@@ -13,10 +13,13 @@ namespace _Scripts.Grid
 		private void OnEnable()
 		{
 			CellController.Clicked += HighLightCell;
+			GameManager.GameResetted += OnGameReset;
+
 		}
 
 		private void OnDisable()
 		{
+			GameManager.GameResetted -= OnGameReset;
 			CellController.Clicked -= HighLightCell;
 		}
 
@@ -56,6 +59,12 @@ namespace _Scripts.Grid
 				ServiceLocator.SetBackgroundColor(themePalette.SameNumberColor);
 			}
 		}
+
+		private void OnGameReset()
+		{
+			ResetColors();
+		}
+		
 
 		private void ResetColors()
 		{

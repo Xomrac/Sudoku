@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using _Scripts.Grid;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using XomracUtilities.Extensions;
@@ -194,12 +195,24 @@ public class GridManager : SerializedMonoBehaviour
 
 	#region Methods
 
-	private IEnumerator Start()
+	private void Start()
 	{
 		CreateGrid();
-		// gridParent.gameObject.SetActive(false);
-		yield return null;
-		// gridParent.gameObject.SetActive(true);
+	}
+
+	private void OnEnable()
+	{
+		GameManager.GameResetted += OnGameReset;
+	}
+	
+	private void OnDisable()
+	{
+		GameManager.GameResetted -= OnGameReset;
+	}
+
+	private void OnGameReset()
+	{
+		CreateGrid();
 	}
 
 	[Button]

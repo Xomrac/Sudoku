@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Theme_Base
   m_EditorClassIdentifier: 
   normalCellsColor: {r: 1, g: 1, b: 1, a: 1}
-  selectedCellColor: {r: 0, g: 0.90328646, b: 1, a: 1}
-  colRowSquaresCellsColor: {r: 0.49540764, g: 0.5283019, b: 0.52667415, a: 1}
-  sameNumberColor: {r: 0.4757565, g: 0.9811321, b: 0.9811321, a: 1}
+  selectedCellColor: {r: 0.5644357, g: 0.8147026, b: 0.990566, a: 0.7058824}
+  colRowSquaresCellsColor: {r: 0.7238163, g: 0.8679245, b: 0.8473376, a: 1}
+  sameNumberColor: {r: 0.4757565, g: 0.9811321, b: 0.9811321, a: 0.7058824}

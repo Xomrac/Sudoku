@@ -9,6 +9,7 @@ namespace _Scripts.Grid
 	{
 		public GameSettings gameSettings;
 		public CellController currentSelectedCell;
+		public static event Action GameResetted;
 
 		public bool IsZenMode => gameSettings.GameMode == GameMode.Zen;
 
@@ -22,6 +23,13 @@ namespace _Scripts.Grid
 			CellController.Clicked -= SelectCell;
 			ErrorsManager.ErrorMade -= CheckForGameOver;
 
+		}
+
+
+		public void ResetGame()
+		{
+			currentSelectedCell = null;
+			GameResetted?.Invoke();
 		}
 		
 

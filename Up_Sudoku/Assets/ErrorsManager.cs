@@ -1,4 +1,5 @@
 using System;
+using _Scripts.Grid;
 using UnityEngine;
 
 public class ErrorsManager : MonoBehaviour
@@ -9,12 +10,19 @@ public class ErrorsManager : MonoBehaviour
 	private void OnEnable()
 	{
 		CellController.ValueInsterted += CheckForError;
+		GameManager.GameResetted += OnGameResetted;
 	}
 
 	private void OnDisable()
 	{
 		CellController.ValueInsterted -= CheckForError;
+		GameManager.GameResetted -= OnGameResetted;
 
+	}
+
+	private void OnGameResetted()
+	{
+		currentErrors = 0;
 	}
 
 	private void CheckForError(bool cellHasCorrectValue)

@@ -30,6 +30,15 @@ public class StatsDisplayer : MonoBehaviour
         TimeManager.Tick += UpdateTime;
         ErrorsManager.ErrorMade += UpdateErrors;
         ScoreManager.ScoreChanged += UpdateScore;
+        GameManager.GameResetted += OnGameReset;
+    }
+
+    private void OnGameReset()
+    {
+        modeText.text = Settings.GameMode.GetEnumName();
+        errorsText.text = Settings.GameMode == GameMode.Classic ? $"0/{Settings.MaxErrors}" : "∞";
+        scoreText.text = Settings.GameMode == GameMode.Classic ? "0" : "∞";
+        timeText.text = "00:00";
     }
 
     private void OnDisable()
@@ -37,6 +46,8 @@ public class StatsDisplayer : MonoBehaviour
         TimeManager.Tick -= UpdateTime;
         ErrorsManager.ErrorMade -= UpdateErrors;
         ScoreManager.ScoreChanged -= UpdateScore;
+        GameManager.GameResetted -= OnGameReset;
+
     }
 
     private void UpdateScore(int score)

@@ -1,4 +1,5 @@
 using System;
+using _Scripts.Grid;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -12,6 +13,21 @@ public class TimeManager : MonoBehaviour
 
 	private float elapsedTime;
 	public float ElapsedTime => elapsedTime;
+	
+	private void OnEnable()
+	{
+		GameManager.GameResetted += OnGameReset;
+	}
+
+	private void OnGameReset()
+	{
+		elapsedTime = 0;
+	}
+
+	private void OnDisable()
+	{
+		GameManager.GameResetted -= OnGameReset;
+	}
 
 	private void Update()
 	{
