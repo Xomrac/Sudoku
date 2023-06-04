@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using _Scripts;
 using _Scripts.Grid;
 using TMPro;
@@ -17,7 +16,11 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	public static event Action<CellController> Clicked;
 
-	public static event Action CellUpdated;
+	[SerializeField] private CellNotesController notesController;
+
+	
+
+	public static event Action<CellController> CellUpdated;
 	public static event Action<bool> ValueInsterted;
 
 	public int? CurrentValue
@@ -31,6 +34,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 				valueText.color = currentlyCompleted ? Color.green : Color.red;
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
+			CellUpdated?.Invoke(this);
 		}
 		get => currentValue;
 	}
@@ -76,11 +80,20 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		valueText.color = Color.black;
 		currentlyCompleted = true;
 	}
+
+	public void AutoResolve()
+	{
+		CurrentValue = correctValue;
+	}
 	
 	public void RemoveValue()
 	{
 		currentValue = null;
 		valueText.text = "";
+		currentlyCompleted = false;
+		notesController?.EraseAllNotes();
+		CellUpdated?.Invoke(this);
+		
 	}
 
 	public void SetBackgroundColor(Color backgroundColor)
@@ -88,15 +101,22 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		background.color = backgroundColor;
 	}
 
-	public void InsertValue(int value)
+	private void InsertValue(int value, bool notes)
 	{
-		CurrentValue = value;
-		CellUpdated?.Invoke();
+		if (!notes)
+		{
+			CurrentValue = value;
+		}
+		else
+		{
+			notesController?.ToggleNote(value);
+		}
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
 		NumberSelector.Selected = InsertValue;
+		ToolsManager.EraserClicked = RemoveValue;
 		Debug.Log($"Clicked On cell {gameObject.name}");
 		Clicked?.Invoke(this);
 	}

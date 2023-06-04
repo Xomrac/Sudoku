@@ -38,7 +38,12 @@ public class GridManager : SerializedMonoBehaviour
 	private Dictionary<int, List<CellController>> squares;
 	public Dictionary<int, List<CellController>> Squares => squares;
 
-	public event Action GridReady; 
+	[SerializeField] [ReadOnly]private List<CellController> uncompletedCells;
+
+	
+
+	public event Action GridReady;
+	public event Action<bool> GameFinished;
 
 	#endregion
 
@@ -203,11 +208,33 @@ public class GridManager : SerializedMonoBehaviour
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
+		ToolsManager.HintClicked += RandomlyFillCell;
+		CellController.CellUpdated += CheckForCompletition;
+
 	}
-	
+
+	private void CheckForCompletition(CellController cell)
+	{
+		if (!uncompletedCells.Contains(cell) && !cell.CurrentlyCompleted)
+		{
+			uncompletedCells.Add(cell);
+		}
+		if (uncompletedCells.Contains(cell) && cell.CurrentlyCompleted)
+		{
+			uncompletedCells.Remove(cell);
+		}
+		if (uncompletedCells.Count==0)
+		{
+			GameFinished?.Invoke(true);
+		}
+	}
+
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
+		ToolsManager.HintClicked -= RandomlyFillCell;
+		CellController.CellUpdated -= CheckForCompletition;
+
 	}
 
 	private void OnGameReset()
@@ -248,9 +275,17 @@ public class GridManager : SerializedMonoBehaviour
 		for (int i = 0; i < amount; i++)
 		{
 			var randomIndex = Random.Range(0, availableCells.Count);
+			uncompletedCells.Add(availableCells[randomIndex]);
 			availableCells[randomIndex].RemoveValue();
 			availableCells.RemoveAt(randomIndex);
 		}
+	}
+
+	private void RandomlyFillCell()
+	{
+		var randomIndex = Random.Range(0, uncompletedCells.Count);
+		uncompletedCells[randomIndex].AutoResolve();
+		uncompletedCells.Remove(uncompletedCells[randomIndex]);
 	}
 
 	#endregion
