@@ -14,6 +14,7 @@ namespace _Scripts.Grid
 		{
 			CellController.Clicked += HighLightCell;
 			GameManager.GameResetted += OnGameReset;
+			CellController.CellUpdated += HighLightCell;
 
 		}
 
@@ -21,6 +22,7 @@ namespace _Scripts.Grid
 		{
 			GameManager.GameResetted -= OnGameReset;
 			CellController.Clicked -= HighLightCell;
+			CellController.CellUpdated -= HighLightCell;
 		}
 
 		private void HighLightCell(CellController selectedCell)

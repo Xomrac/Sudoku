@@ -13,8 +13,7 @@ public class ToolsManager : MonoBehaviour
     [SerializeField] private Button hintButton;
     [SerializeField] private Button notesButton;
 
-    public static  Action EraserClicked;
-    public static event Action UndoClicked;
+    public static Action EraserClicked;
     public static event Action HintClicked;
     public static event Action NotesClicked;
 
@@ -26,7 +25,7 @@ public class ToolsManager : MonoBehaviour
     private void Start()
     {
         undoButton.onClick.RemoveAllListeners();
-        undoButton.onClick.AddListener(()=>{UndoClicked?.Invoke();});
+        undoButton.onClick.AddListener(() => {ActionRecorder.Instance.Undo();});
         
         eraserButton.onClick.RemoveAllListeners();
         eraserButton.onClick.AddListener(()=>{EraserClicked?.Invoke();});

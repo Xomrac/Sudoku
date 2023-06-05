@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using _Scripts;
 using _Scripts.Grid;
 using TMPro;
@@ -12,16 +13,21 @@ using XomracUtilities.Patterns;
 
 public class CellController : ServiceLocator, IPointerDownHandler
 {
+
+	[SerializeField] private ThemePalette theme;
+
+	
 	private int? currentValue;
 
 	public static event Action<CellController> Clicked;
 
 	[SerializeField] private CellNotesController notesController;
-
-	
+	public CellNotesController NotesController => notesController;
 
 	public static event Action<CellController> CellUpdated;
 	public static event Action<bool> ValueInsterted;
+	
+	
 
 	public int? CurrentValue
 	{
@@ -29,12 +35,14 @@ public class CellController : ServiceLocator, IPointerDownHandler
 			currentValue = value;
 			valueText.text = value == null ? "" : $"{value}";
 			currentlyCompleted = value == correctValue;
+			valueText.color = theme.NeutralValuesColor;
 			if (!GameManager.Instance.IsZenMode)
 			{
-				valueText.color = currentlyCompleted ? Color.green : Color.red;
+				valueText.color = currentlyCompleted ? theme.CorrectValuesColor : theme.WrongValuesColor;
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
 			CellUpdated?.Invoke(this);
+			
 		}
 		get => currentValue;
 	}
@@ -46,9 +54,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	[SerializeField] private TextMeshProUGUI valueText;
 	[SerializeField] private Image background;
-
-	private bool completedAFirstTime;
-	public bool CompletedAFirstTime => completedAFirstTime;
+	
 
 	private bool currentlyCompleted;
 	public bool CurrentlyCompleted => currentlyCompleted;
@@ -77,7 +83,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		correctValue = value;
 		currentValue = correctValue;
 		valueText.text = $"{value}";
-		valueText.color = Color.black;
+		valueText.color = theme.InitialValuesColor;
 		currentlyCompleted = true;
 	}
 
@@ -95,27 +101,49 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		CellUpdated?.Invoke(this);
 	}
 
+	public void ReInsertPreviousValue(int? value)
+	{
+		if (!GameManager.Instance.IsZenMode && currentlyCompleted) return;
+		
+		currentValue = value;
+		valueText.text = value == null ? "" : $"{value}";
+		currentlyCompleted = value == correctValue;
+		valueText.color = theme.NeutralValuesColor;
+		if (!GameManager.Instance.IsZenMode)
+		{
+			valueText.color = currentlyCompleted ? theme.CorrectValuesColor : theme.WrongValuesColor;
+		}
+		CellUpdated?.Invoke(this);
+	}
+
+	
+
 	public void SetBackgroundColor(Color backgroundColor)
 	{
 		background.color = backgroundColor;
 	}
 
-	private void InsertValue(int value, bool notes)
+	public void OnValuePressed(int value, bool notes)
 	{
 		if (!notes)
 		{
-			CurrentValue = value;
+			ActionRecorder.Instance.Record(new InputValueAction(this,currentValue,value));
 		}
 		else
 		{
-			notesController?.ToggleNote(value);
+			ActionRecorder.Instance.Record(new InputNoteAction(this,value));
 		}
+	}
+	
+	public void OnEraserPressed()
+	{
+		ActionRecorder.Instance.Record(new EraseAction(this,currentValue,notesController?.GetActiveNotes()));
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
-		NumberSelector.Selected = InsertValue;
-		ToolsManager.EraserClicked = RemoveValue;
+		NumberSelector.Selected = OnValuePressed;
+		ToolsManager.EraserClicked = OnEraserPressed;
 		Clicked?.Invoke(this);
 	}
 

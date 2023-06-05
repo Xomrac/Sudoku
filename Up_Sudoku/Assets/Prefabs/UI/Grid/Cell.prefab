@@ -1044,6 +1044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1338eadf7541d734c8e0067a31b5cdf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  theme: {fileID: 11400000, guid: a90098417ab3186448f75e9cc82a7d52, type: 2}
   notesController: {fileID: 3651796958554558216}
   correctValue: 0
   node:

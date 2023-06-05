@@ -16,3 +16,8 @@ MonoBehaviour:
   selectedCellColor: {r: 0.5644357, g: 0.8147026, b: 0.990566, a: 0.7058824}
   colRowSquaresCellsColor: {r: 0.7238163, g: 0.8679245, b: 0.8473376, a: 1}
   sameNumberColor: {r: 0.4757565, g: 0.9811321, b: 0.9811321, a: 0.7058824}
+  initialValuesColor: {r: 0, g: 0, b: 0, a: 1}
+  correctValuesColor: {r: 0, g: 0.4245283, b: 0.0845163, a: 1}
+  wrongValuesColor: {r: 0.49056602, g: 0, b: 0, a: 1}
+  neutralValuesColor: {r: 0.14528298, g: 0.5827653, b: 1, a: 1}
+  notesColor: {r: 0.4784314, g: 0.4784314, b: 0.4784314, a: 1}
