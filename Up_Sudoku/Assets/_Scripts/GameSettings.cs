@@ -15,16 +15,32 @@ namespace _Scripts
 	public class GameSettings
 	{
 		[SerializeField]private GameMode gameMode;
-		public GameMode GameMode => gameMode;
+		public GameMode GameMode
+		{
+			get => gameMode;
+			set => gameMode = value;
+		}
 
 		[SerializeField][Min(1)] [MaxValue(81)] private int blankCells;
-		public int BlankCells => blankCells;
+		public int BlankCells
+		{
+			get => blankCells;
+			set => blankCells = value;
+		}
 
 		[SerializeField]private int maxErrors;
-		public int MaxErrors => maxErrors;
+		public int MaxErrors
+		{
+			get => maxErrors;
+			set => maxErrors = value;
+		}
 
 		[SerializeField][Min(0)] [MaxValue(81)] private int maxHints;
-		public int MaxHints => maxHints;
+		public int MaxHints
+		{
+			get => maxHints;
+			set => maxHints = value;
+		}
 
 		public GameSettings(GameMode mode, int cells, int errors, int hints)
 		{

@@ -5,7 +5,8 @@ using UnityEngine;
 public class ErrorsManager : MonoBehaviour
 {
 	[SerializeField] private int currentErrors;
-	public static event Action<int> ErrorMade;
+	public static event Action GameLost;
+	public static event Action<int> ErrorsChanged;
 
 	private void OnEnable()
 	{
@@ -30,6 +31,10 @@ public class ErrorsManager : MonoBehaviour
 		if (cellHasCorrectValue) return;
 		
 		currentErrors++;
-		ErrorMade?.Invoke(currentErrors);
+		ErrorsChanged?.Invoke(currentErrors);
+		if (currentErrors>=GameManager.Instance.gameSettings.MaxErrors)
+		{
+			GameLost?.Invoke();
+		}
 	}
 }

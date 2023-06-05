@@ -28,9 +28,9 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		set{
 			currentValue = value;
 			valueText.text = value == null ? "" : $"{value}";
+			currentlyCompleted = value == correctValue;
 			if (!GameManager.Instance.IsZenMode)
 			{
-				currentlyCompleted = value == correctValue;
 				valueText.color = currentlyCompleted ? Color.green : Color.red;
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
@@ -93,7 +93,6 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		currentlyCompleted = false;
 		notesController?.EraseAllNotes();
 		CellUpdated?.Invoke(this);
-		
 	}
 
 	public void SetBackgroundColor(Color backgroundColor)
@@ -117,7 +116,6 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	{
 		NumberSelector.Selected = InsertValue;
 		ToolsManager.EraserClicked = RemoveValue;
-		Debug.Log($"Clicked On cell {gameObject.name}");
 		Clicked?.Invoke(this);
 	}
 

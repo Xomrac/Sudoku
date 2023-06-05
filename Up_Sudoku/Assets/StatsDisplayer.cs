@@ -28,7 +28,7 @@ public class StatsDisplayer : MonoBehaviour
     private void OnEnable()
     {
         TimeManager.Tick += UpdateTime;
-        ErrorsManager.ErrorMade += UpdateErrors;
+        ErrorsManager.ErrorsChanged += UpdateErrors;
         ScoreManager.ScoreChanged += UpdateScore;
         GameManager.GameResetted += OnGameReset;
     }
@@ -44,7 +44,7 @@ public class StatsDisplayer : MonoBehaviour
     private void OnDisable()
     {
         TimeManager.Tick -= UpdateTime;
-        ErrorsManager.ErrorMade -= UpdateErrors;
+        ErrorsManager.ErrorsChanged -= UpdateErrors;
         ScoreManager.ScoreChanged -= UpdateScore;
         GameManager.GameResetted -= OnGameReset;
 

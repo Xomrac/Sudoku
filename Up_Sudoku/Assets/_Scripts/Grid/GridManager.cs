@@ -19,7 +19,6 @@ public class GridManager : SerializedMonoBehaviour
 	private const int GRID_DIMENSION = 9;
 	private const int SQUARES_DIMENSION = 3;
 
-	public int numbersToRemove = 30;
 
 	[SerializeField] private RectTransform gridParent;
 
@@ -40,10 +39,12 @@ public class GridManager : SerializedMonoBehaviour
 
 	[SerializeField] [ReadOnly]private List<CellController> uncompletedCells;
 
+
+	private bool canCheck = false;
 	
 
-	public event Action GridReady;
-	public event Action<bool> GameFinished;
+	public static event Action GridReady;
+	public static event Action GameWon;
 
 	#endregion
 
@@ -200,21 +201,24 @@ public class GridManager : SerializedMonoBehaviour
 
 	#region Methods
 
-	private void Start()
-	{
-		CreateGrid();
-	}
+	// private void Start()
+	// {
+	// 	CreateGrid();
+	// }
 
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
 		ToolsManager.HintClicked += RandomlyFillCell;
 		CellController.CellUpdated += CheckForCompletition;
+		GameManager.GameStarted += CreateGrid;
 
 	}
 
 	private void CheckForCompletition(CellController cell)
 	{
+		if (!canCheck) return;
+		
 		if (!uncompletedCells.Contains(cell) && !cell.CurrentlyCompleted)
 		{
 			uncompletedCells.Add(cell);
@@ -225,7 +229,7 @@ public class GridManager : SerializedMonoBehaviour
 		}
 		if (uncompletedCells.Count==0)
 		{
-			GameFinished?.Invoke(true);
+			GameWon?.Invoke();
 		}
 	}
 
@@ -234,6 +238,8 @@ public class GridManager : SerializedMonoBehaviour
 		GameManager.GameResetted -= OnGameReset;
 		ToolsManager.HintClicked -= RandomlyFillCell;
 		CellController.CellUpdated -= CheckForCompletition;
+		GameManager.GameStarted -= CreateGrid;
+
 
 	}
 
@@ -249,10 +255,11 @@ public class GridManager : SerializedMonoBehaviour
 		creationStopWatch = new Stopwatch();
 		creationStopWatch.Start();
 		PopulateCells();
-		EraseCells(numbersToRemove);
+		EraseCells(GameManager.Instance.gameSettings.BlankCells);
 		Debug.Log($"Grid created in {creationStopWatch.ElapsedMilliseconds}ms");
 		GridReady?.Invoke();
 		creationStopWatch.Stop();
+		canCheck = true;
 	}
 
 	private void PopulateCells()
@@ -271,7 +278,7 @@ public class GridManager : SerializedMonoBehaviour
 
 	private void EraseCells(int amount)
 	{
-		var availableCells = cells.Flatten().ToList();
+		var availableCells = cells.Cast<CellController>().ToList();
 		for (int i = 0; i < amount; i++)
 		{
 			var randomIndex = Random.Range(0, availableCells.Count);
@@ -284,8 +291,9 @@ public class GridManager : SerializedMonoBehaviour
 	private void RandomlyFillCell()
 	{
 		var randomIndex = Random.Range(0, uncompletedCells.Count);
-		uncompletedCells[randomIndex].AutoResolve();
+		var cellToResolve = uncompletedCells[randomIndex];
 		uncompletedCells.Remove(uncompletedCells[randomIndex]);
+		cellToResolve.AutoResolve();
 	}
 
 	#endregion

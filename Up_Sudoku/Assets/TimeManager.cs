@@ -1,6 +1,7 @@
 using System;
 using _Scripts.Grid;
 using UnityEngine;
+using XomracUtilities.Patterns;
 
 public class TimeManager : MonoBehaviour
 {
@@ -13,21 +14,34 @@ public class TimeManager : MonoBehaviour
 
 	private float elapsedTime;
 	public float ElapsedTime => elapsedTime;
-	
+
+	private void Start()
+	{
+		// elapsedTime = 0;
+		// Pause();
+	}
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
-	}
-
-	private void OnGameReset()
-	{
-		elapsedTime = 0;
+		ErrorsManager.GameLost += Pause;
+		GridManager.GameWon += Pause;
+		GridManager.GridReady += Resume;
 	}
 
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
+		ErrorsManager.GameLost -= Pause;
+		GridManager.GameWon -= Pause;
+		GridManager.GridReady -= Resume;
+
 	}
+	
+	private void OnGameReset()
+	{
+		elapsedTime = 0;
+	}
+	
 
 	private void Update()
 	{

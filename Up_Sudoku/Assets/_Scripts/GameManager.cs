@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using XomracUtilities.Patterns;
 
 namespace _Scripts.Grid
@@ -8,56 +9,71 @@ namespace _Scripts.Grid
 	public class GameManager : Singleton<GameManager>
 	{
 		public GameSettings gameSettings;
-		public CellController currentSelectedCell;
 		public static event Action GameResetted;
+		public static event Action GameStarted;
+
+		[SerializeField] private GameObject loadingScreen;
+		[SerializeField] private Canvas winCanvas;
+		[SerializeField] private Canvas loseCanvas;
+		[SerializeField] private string menuScene;
+
+		
 
 		public bool IsZenMode => gameSettings.GameMode == GameMode.Zen;
 
 		private void OnEnable()
 		{
-			CellController.Clicked += SelectCell;
-			ErrorsManager.ErrorMade += CheckForGameOver;
+			ErrorsManager.GameLost+= DisplayLoseCanvas;
+			GridManager.GridReady += RemoveLoading;
+			GridManager.GameWon += DisplayWinCanvas;
 		}
+
+		public override void Awake()
+		{
+			base.Awake();
+			gameSettings = new GameSettings(GameRules.gameRules.GameMode,GameRules.gameRules.BlankCells,GameRules.gameRules.MaxErrors,GameRules.gameRules.MaxHints);
+		}
+
 		private void OnDisable()
 		{
-			CellController.Clicked -= SelectCell;
-			ErrorsManager.ErrorMade -= CheckForGameOver;
+			ErrorsManager.GameLost-= DisplayLoseCanvas;
+			GridManager.GridReady -= RemoveLoading;
+			GridManager.GameWon -= DisplayWinCanvas;
 
 		}
 
+		private void DisplayWinCanvas()
+		{
+			winCanvas.gameObject.SetActive(true);
+		}
+		private void DisplayLoseCanvas()
+		{
+			loseCanvas.gameObject.SetActive(true);
+		}
 
 		public void ResetGame()
 		{
-			currentSelectedCell = null;
 			GameResetted?.Invoke();
+			loseCanvas.gameObject.SetActive(false);
+			winCanvas.gameObject.SetActive(false);
+		}
+
+		public void ReturnToMenu()
+		{
+			SceneManager.LoadScene(menuScene);
 		}
 		
 
-		private void Erase()
+		private void Start()
 		{
-			if (currentSelectedCell==null || currentSelectedCell.CurrentlyCompleted) return;
-			currentSelectedCell.RemoveValue();
+			GameStarted?.Invoke();
 		}
 
-	
-
-		private void SelectCell(CellController cell)
+		private void RemoveLoading()
 		{
-			currentSelectedCell = cell;
+			loadingScreen.SetActive(false);
 		}
 
-		private void CheckForGameOver(int amountOfErrors)
-		{
-			if (amountOfErrors >= gameSettings.MaxErrors)
-			{
-				Debug.Log("GAME OVER!");
-			}
-		}
-
-		public void CheckForVictory()
-		{
-			
-		}
 	}
 
 }
