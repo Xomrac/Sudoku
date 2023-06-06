@@ -955,7 +955,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4312819994608130240}
   m_Layer: 5
-  m_Name: Hints
+  m_Name: Notes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1045,7 +1045,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1338eadf7541d734c8e0067a31b5cdf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neutralInput: {fileID: 11400000, guid: d6385a3eef525f8489da9642159c859e, type: 2}
+  correctInput: {fileID: 11400000, guid: 50171ccb8f30f78488b3758604c46e6c, type: 2}
+  wrongInput: {fileID: 11400000, guid: 4a5aeb932ed280b4fb4d2a249e647418, type: 2}
+  eraseInput: {fileID: 11400000, guid: 7140c384fc619504289d0c56b8669c76, type: 2}
+  hintInput: {fileID: 11400000, guid: 013ac06b96e37b54983faa65a208d5d3, type: 2}
   notesController: {fileID: 3651796958554558216}
+  growEndValue: 1.1
+  growSpeed: 0.2
+  ease: 6
   correctValue: 0
   node:
     cellIndex: 0
@@ -1066,6 +1074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   background: {fileID: 7675634357015696947}
+  colorTransitionTime: 0.2
 --- !u!114 &3651796958554558216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1078,152 +1087,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e456c139c1dd46f7a79120cf4b948ce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 2396350192413434574}
-    - {fileID: 2733606022622462056}
-    - {fileID: 3798938548748029759}
-    - {fileID: 1696864891651646231}
-    - {fileID: 4804297061961997965}
-    - {fileID: 4903731239860670938}
-    - {fileID: 7888684174448007094}
-    - {fileID: 8603412136030628508}
-    - {fileID: 8425040912155200345}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: notes
-      Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[UnityEngine.GameObject,
-        UnityEngine.CoreModule]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 9
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 1
-    - Name: $v
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 2
-    - Name: $v
-      Entry: 10
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 3
-    - Name: $v
-      Entry: 10
-      Data: 2
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 4
-    - Name: $v
-      Entry: 10
-      Data: 3
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 5
-    - Name: $v
-      Entry: 10
-      Data: 4
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 6
-    - Name: $v
-      Entry: 10
-      Data: 5
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 7
-    - Name: $v
-      Entry: 10
-      Data: 6
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 8
-    - Name: $v
-      Entry: 10
-      Data: 7
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 9
-    - Name: $v
-      Entry: 10
-      Data: 8
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+  growSpeed: 0.2
+  notesParent: {fileID: 4312819994608130240}
 --- !u!114 &1440366856325335591
 MonoBehaviour:
   m_ObjectHideFlags: 0

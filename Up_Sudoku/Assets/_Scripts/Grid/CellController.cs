@@ -16,6 +16,12 @@ public class CellController : ServiceLocator, IPointerDownHandler
 {
 	private int? currentValue;
 
+	[SerializeField] private ScriptableAudio neutralInput;
+	[SerializeField] private ScriptableAudio correctInput;
+	[SerializeField] private ScriptableAudio wrongInput;
+	[SerializeField] private ScriptableAudio eraseInput;
+	[SerializeField] private ScriptableAudio hintInput;
+
 	public static event Action<CellController> Clicked;
 
 	[SerializeField] private CellNotesController notesController;
@@ -25,15 +31,14 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	public static event Action<bool> ValueInsterted;
 
 	private bool editable = false;
-	
-	[SerializeField] private float growEndValue=1.1f;
-	[SerializeField] private float growSpeed=.2f;
+
+	[SerializeField] private float growEndValue = 1.1f;
+	[SerializeField] private float growSpeed = .2f;
 	[SerializeField] private Ease ease;
 
 	public int? CurrentValue
 	{
-		set
-		{
+		set{
 			currentValue = value;
 			valueText.text = value == null ? "" : $"{value}";
 			currentlyCompleted = value == correctValue;
@@ -46,6 +51,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 					valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor);
 					sequence.Append(valueText.transform.DOPunchPosition(new Vector3(0, 10, 0), growSpeed));
 					editable = false;
+					AudioManager.Instance.PlayEffect(correctInput);
 				}
 				else
 				{
@@ -53,14 +59,15 @@ public class CellController : ServiceLocator, IPointerDownHandler
 					sequence.Append(valueText.transform.DOPunchRotation(new Vector3(0, 0, -30), growSpeed));
 					valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.wrongValuesColor);
 					editable = true;
+					AudioManager.Instance.PlayEffect(wrongInput);
 				}
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
+
 			sequence.Append(valueText.transform.DOScale(growEndValue, growSpeed));
 			sequence.Append(valueText.transform.DOScale(1, growSpeed));
 			sequence.Play();
 			CellUpdated?.Invoke(this);
-			
 		}
 		get => currentValue;
 	}
@@ -96,9 +103,9 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		currentValue = value;
 		valueText.text = $"{value}";
 		valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.initialValuesColor);
-		currentlyCompleted = currentValue==correctValue;
+		currentlyCompleted = currentValue == correctValue;
 		editable = !value.HasValue;
-		notesController?.EraseAllNotes();
+		notesController?.DisableAllNotes();
 	}
 
 	public void SetInitialValue(int value)
@@ -112,17 +119,22 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	public void AutoResolve()
 	{
+		AudioManager.Instance.PlayEffect(hintInput);
 		CurrentValue = correctValue;
+		valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor);
+		editable = false;
 	}
-	
+
 	public void RemoveValue()
 	{
 		if (!editable) return;
-		
+
+		AudioManager.Instance.PlayEffect(eraseInput);
+
 		currentValue = null;
 		currentlyCompleted = false;
 		notesController?.EraseAllNotes();
-		var sequence=DOTween.Sequence();
+		var sequence = DOTween.Sequence();
 		sequence.Append(valueText.transform.DOScale(0, growSpeed));
 		sequence.onComplete += () => valueText.text = "";
 		CellUpdated?.Invoke(this);
@@ -136,12 +148,11 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		notesController?.EraseAllNotes();
 		editable = true;
 	}
-	
 
 	public void ReInsertPreviousValue(int? value)
 	{
 		if (!GameManager.Instance.IsZenMode && currentlyCompleted) return;
-		
+
 		currentValue = value;
 		valueText.text = value == null ? "" : $"{value}";
 		currentlyCompleted = value == correctValue;
@@ -152,7 +163,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		}
 		CellUpdated?.Invoke(this);
 	}
-	
+
 	private void Animate()
 	{
 		var sequence = DOTween.Sequence();
@@ -160,30 +171,31 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		sequence.Append(transform.DOScale(1f, growSpeed).SetEase(ease));
 		sequence.Play();
 	}
-	
+
 	public void OnValuePressed(int value, bool notes)
 	{
 		if (!editable) return;
-		
+
+		AudioManager.Instance.PlayEffect(neutralInput);
 		if (!notes)
 		{
-			ActionRecorder.Instance.Record(new InputValueAction(this,currentValue,value));
+			ActionRecorder.Instance.Record(new InputValueAction(this, currentValue, value));
 		}
 		else
 		{
-			ActionRecorder.Instance.Record(new InputNoteAction(this,value));
+			ActionRecorder.Instance.Record(new InputNoteAction(this, value));
 		}
 	}
-	
+
 	public void OnEraserPressed()
 	{
-		ActionRecorder.Instance.Record(new EraseAction(this,currentValue,notesController?.GetActiveNotes()));
+		ActionRecorder.Instance.Record(new EraseAction(this, currentValue, notesController?.GetActiveNotes()));
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
 		if (!editable) return;
-		
+
 		NumberSelector.Selected = OnValuePressed;
 		ToolsManager.EraserClicked = OnEraserPressed;
 		Animate();
@@ -193,8 +205,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	public override void PopulateDictionary()
 	{
 		services.Add(typeof(CellHighlighter), GetComponent<CellHighlighter>());
-		services.Add(typeof(CellThemer),GetComponent<CellThemer>());
+		services.Add(typeof(CellThemer), GetComponent<CellThemer>());
 	}
 
-	
 }

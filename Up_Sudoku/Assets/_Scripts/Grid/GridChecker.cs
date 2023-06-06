@@ -8,6 +8,7 @@ public class GridChecker : SerializedServiceComponent<GridManager>
 
 	#region Fields
 	
+	
 	private Dictionary<int, List<CellController>> rows;
 	public Dictionary<int, List<CellController>> Rows => rows;
 

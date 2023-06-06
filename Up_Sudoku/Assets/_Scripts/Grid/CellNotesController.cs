@@ -4,14 +4,24 @@ using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class CellNotesController : SerializedMonoBehaviour
+public class CellNotesController : MonoBehaviour
 {
-
 	[SerializeField] private Dictionary<int,GameObject> notes;
 	[SerializeField] private float growSpeed=.2f;
+	[SerializeField] private Transform notesParent;
 
-	
+	private void Awake()
+	{
+		notes = new Dictionary<int, GameObject>();
+		int index = 1;
+		foreach (Transform child in notesParent)
+		{
+			notes.TryAdd(index, child.gameObject);
+			index++;
+		}
+	}
 
 	public List<int> GetActiveNotes()
 	{
@@ -20,10 +30,7 @@ public class CellNotesController : SerializedMonoBehaviour
 
 	private void Start()
 	{
-		foreach (KeyValuePair<int,GameObject> pair in notes)
-		{
-			pair.Value.SetActive(false);
-		}
+		DisableAllNotes();
 	}
 
 	public void ToggleNote(int value)
@@ -50,14 +57,20 @@ public class CellNotesController : SerializedMonoBehaviour
 
 	public void ActivatesNotes(List<int> notesToActivate)
 	{
-	
-
 		if (notesToActivate.Count<=0) return;
 		
 		EraseAllNotes();
 		foreach (int index in notesToActivate)
 		{
 			AnimateNote(notes[index],true);
+		}
+	}
+
+	public void DisableAllNotes()
+	{
+		foreach (KeyValuePair<int,GameObject> pair in notes)
+		{
+			pair.Value.SetActive(false);
 		}
 	}
 

@@ -8,6 +8,12 @@ namespace _Scripts.Grid
 
 	public class GameManager : Singleton<GameManager>
 	{
+		[SerializeField] private ScriptableAudio gameWin;
+		[SerializeField] private ScriptableAudio gameLost;
+
+		
+
+		
 		public GameSettings gameSettings;
 		public static event Action GameResetted;
 		public static event Action GameRestarted;
@@ -44,10 +50,12 @@ namespace _Scripts.Grid
 
 		private void DisplayWinCanvas()
 		{
+			AudioManager.Instance.PlayEffect(gameWin);
 			winCanvas.gameObject.SetActive(true);
 		}
 		private void DisplayLoseCanvas()
 		{
+			AudioManager.Instance.PlayEffect(gameLost);
 			loseCanvas.gameObject.SetActive(true);
 		}
 

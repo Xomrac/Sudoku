@@ -89,7 +89,7 @@ public class GridManager : SerializedServiceLocator
 		GameManager.GameResetted -= OnGameReset;
 		
 		ToolsManager.HintUsed -= RandomlyFillCell;
-		GameManager.GameRestarted += OnGameRestart;
+		GameManager.GameRestarted -= OnGameRestart;
 
 	}
 
@@ -99,8 +99,8 @@ public class GridManager : SerializedServiceLocator
 	
 	private void OnGameReset()
 	{
-		GetService<GridBuilder>().CreateGrid();
 		uncompletedCells = new List<CellController>();
+		GetService<GridBuilder>().CreateGrid();
 	}
 
 	private void OnGameRestart()
