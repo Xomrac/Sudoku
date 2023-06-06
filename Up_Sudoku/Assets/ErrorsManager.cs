@@ -12,12 +12,15 @@ public class ErrorsManager : MonoBehaviour
 	{
 		CellController.ValueInsterted += CheckForError;
 		GameManager.GameResetted += OnGameResetted;
+		GameManager.GameRestarted += OnGameResetted;
 	}
 
 	private void OnDisable()
 	{
 		CellController.ValueInsterted -= CheckForError;
 		GameManager.GameResetted -= OnGameResetted;
+		GameManager.GameRestarted -= OnGameResetted;
+
 
 	}
 

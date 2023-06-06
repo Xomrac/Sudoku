@@ -18,6 +18,8 @@ public class TimeManager : MonoBehaviour
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
+		GameManager.GameRestarted += OnGameReset;
+
 		ErrorsManager.GameLost += Pause;
 		GridChecker.GameWon += Pause;
 		GridBuilder.GridReady += Resume;
@@ -26,6 +28,8 @@ public class TimeManager : MonoBehaviour
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
+		GameManager.GameRestarted -= OnGameReset;
+
 		ErrorsManager.GameLost -= Pause;
 		GridChecker.GameWon -= Pause;
 		GridBuilder.GridReady -= Resume;

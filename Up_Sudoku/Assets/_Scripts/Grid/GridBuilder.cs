@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using _Scripts.Grid;
@@ -119,8 +120,28 @@ public class GridBuilder : SerializedServiceComponent<GridManager>
 
 	#region Methods
 
+	public void RecreateGrid()
+	{
+		int index = 0;
+		ServiceLocator.UncompletedCells = new List<CellController>();
+		foreach (var cell in ServiceLocator.cells)
+		{
+			var value = ServiceLocator.startingValues[index];
+			cell.ReplaceInitialValue(value);
+			if (!value.HasValue)
+			{
+				ServiceLocator.UncompletedCells.Add(cell);
+			}
+			index++;
+		}
+		
+	}
 	public void CreateGrid()
 	{
+		foreach (CellController cell in ServiceLocator.cells)
+		{
+			cell.SetInitialValue(0);
+		}
 		creationStopWatch = new Stopwatch();
 		creationStopWatch.Start();
 		FillDiagonal();
@@ -128,6 +149,11 @@ public class GridBuilder : SerializedServiceComponent<GridManager>
 		EraseRandomCells(GameManager.Instance.gameSettings.BlankCells);
 		Debug.Log($"Grid created in {creationStopWatch.ElapsedMilliseconds}ms");
 		GridReady?.Invoke();
+		ServiceLocator.startingValues = new List<int?>();
+		foreach (CellController cell in ServiceLocator.cells)
+		{
+			ServiceLocator.startingValues.Add(cell.CurrentValue);
+		}
 		creationStopWatch.Stop();
 	}
 

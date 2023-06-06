@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using XomracUtilities.Patterns;
@@ -11,6 +12,9 @@ namespace _Scripts.Grid
 	{
 
 		[SerializeField] private Image background;
+		[SerializeField] private float colorTransitionTime=.2f;
+
+		
 		
 		
 		private void OnEnable()
@@ -18,6 +22,8 @@ namespace _Scripts.Grid
 			CellController.Clicked += HighLightCell;
 			GameManager.GameResetted += OnGameReset;
 			CellController.CellUpdated += HighLightCell;
+			GameManager.GameRestarted += OnGameReset;
+
 		}
 
 		private void OnDisable()
@@ -25,11 +31,15 @@ namespace _Scripts.Grid
 			CellController.Clicked -= HighLightCell;
 			GameManager.GameResetted -= OnGameReset;
 			CellController.CellUpdated -= HighLightCell;
-		}
+			GameManager.GameRestarted -= OnGameReset;
 
+		}
+		
+		
+		
 		public void ResetColors()
 		{
-			background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor);
+			background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor), colorTransitionTime);
 		}
 		private void HighLightCell(CellController selectedCell)
 		{
@@ -38,7 +48,7 @@ namespace _Scripts.Grid
 			HiglightSameValue(selectedCell);
 			if (selectedCell == ServiceLocator)
 			{
-				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.selectedCellColor);
+				background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.selectedCellColor),colorTransitionTime);
 			}
 		}
 
@@ -53,7 +63,7 @@ namespace _Scripts.Grid
 			
 			if (isInSameColumn || isInSameRow || isInSameSquare)
 			{
-				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.colRowSquareCellsColor);
+				background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.colRowSquareCellsColor),colorTransitionTime);
 			}
 		}
 
@@ -63,7 +73,7 @@ namespace _Scripts.Grid
 
 			if (selectedCell.CurrentValue == ServiceLocator.CurrentValue)
 			{
-				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.sameNumberCellsColor);
+				background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.sameNumberCellsColor),colorTransitionTime);
 			}
 		}
 

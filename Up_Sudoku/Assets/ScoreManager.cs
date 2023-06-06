@@ -15,12 +15,16 @@ public class ScoreManager : MonoBehaviour
 	{
 		CellController.ValueInsterted += UpdateScore;
 		GameManager.GameResetted += OnGameResetted;
+		GameManager.GameRestarted += OnGameResetted;
+
 	}
 
 	private void OnDisable()
 	{
 		CellController.ValueInsterted -= UpdateScore;
 		GameManager.GameResetted -= OnGameResetted;
+		GameManager.GameRestarted -= OnGameResetted;
+
 
 	}
 

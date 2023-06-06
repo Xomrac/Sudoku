@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using _Scripts;
 using _Scripts.Grid;
+using DG.Tweening;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -24,19 +25,40 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	public static event Action<bool> ValueInsterted;
 
 	private bool editable = false;
+	
+	[SerializeField] private float growEndValue=1.1f;
+	[SerializeField] private float growSpeed=.2f;
+	[SerializeField] private Ease ease;
 
 	public int? CurrentValue
 	{
-		set{
+		set
+		{
 			currentValue = value;
 			valueText.text = value == null ? "" : $"{value}";
 			currentlyCompleted = value == correctValue;
 			valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.neutralValuesColor);
+			var sequence = DOTween.Sequence();
 			if (!GameManager.Instance.IsZenMode)
 			{
-				valueText.color = currentlyCompleted ? GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor) : GetService<CellThemer>().Theme.GetElementColor(ElementsNames.wrongValuesColor);
+				if (currentlyCompleted)
+				{
+					valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor);
+					sequence.Append(valueText.transform.DOPunchPosition(new Vector3(0, 10, 0), growSpeed));
+					editable = false;
+				}
+				else
+				{
+					sequence.Append(valueText.transform.DOPunchRotation(new Vector3(0, 0, 30), growSpeed));
+					sequence.Append(valueText.transform.DOPunchRotation(new Vector3(0, 0, -30), growSpeed));
+					valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.wrongValuesColor);
+					editable = true;
+				}
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
+			sequence.Append(valueText.transform.DOScale(growEndValue, growSpeed));
+			sequence.Append(valueText.transform.DOScale(1, growSpeed));
+			sequence.Play();
 			CellUpdated?.Invoke(this);
 			
 		}
@@ -68,7 +90,16 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	{
 		PopulateDictionary();
 	}
-	
+
+	public void ReplaceInitialValue(int? value)
+	{
+		currentValue = value;
+		valueText.text = $"{value}";
+		valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.initialValuesColor);
+		currentlyCompleted = currentValue==correctValue;
+		editable = !value.HasValue;
+		notesController?.EraseAllNotes();
+	}
 
 	public void SetInitialValue(int value)
 	{
@@ -86,10 +117,14 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	
 	public void RemoveValue()
 	{
+		if (!editable) return;
+		
 		currentValue = null;
-		valueText.text = "";
 		currentlyCompleted = false;
 		notesController?.EraseAllNotes();
+		var sequence=DOTween.Sequence();
+		sequence.Append(valueText.transform.DOScale(0, growSpeed));
+		sequence.onComplete += () => valueText.text = "";
 		CellUpdated?.Invoke(this);
 	}
 
@@ -118,6 +153,14 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		CellUpdated?.Invoke(this);
 	}
 	
+	private void Animate()
+	{
+		var sequence = DOTween.Sequence();
+		sequence.Append(transform.DOScale(growEndValue, growSpeed).SetEase(ease));
+		sequence.Append(transform.DOScale(1f, growSpeed).SetEase(ease));
+		sequence.Play();
+	}
+	
 	public void OnValuePressed(int value, bool notes)
 	{
 		if (!editable) return;
@@ -139,8 +182,11 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
+		if (!editable) return;
+		
 		NumberSelector.Selected = OnValuePressed;
 		ToolsManager.EraserClicked = OnEraserPressed;
+		Animate();
 		Clicked?.Invoke(this);
 	}
 

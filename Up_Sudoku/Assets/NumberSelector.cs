@@ -13,16 +13,18 @@ public class NumberSelector : MonoBehaviour
 
    [SerializeField] private TextMeshProUGUI numberText;
    [SerializeField] private Button button;
-
+   
    private bool notesActive;
 
    private void Start()
    {
-      button.onClick.RemoveAllListeners();
       numberText.text = $"{selectableNumber}";
-      button.onClick.AddListener(() => { Selected?.Invoke(selectableNumber,notesActive);});
+      button.onClick.AddListener(() =>
+      {
+         Selected?.Invoke(selectableNumber,notesActive);
+      });
    }
-
+   
    private void OnEnable()
    {
       ToolsManager.NotesClicked += ToggleNotes;

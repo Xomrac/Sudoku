@@ -18,7 +18,13 @@ public class GridManager : SerializedServiceLocator
 	[SerializeField] [HideInInspector]public CellController[,] cells;
 
 	[SerializeField] [ReadOnly] private List<CellController> uncompletedCells;
-	public List<CellController> UncompletedCells => uncompletedCells;
+	public List<CellController> UncompletedCells
+	{
+		get => uncompletedCells;
+		set => uncompletedCells = value;
+	}
+
+	public List<int?> startingValues;
 
 	#endregion
 
@@ -74,12 +80,17 @@ public class GridManager : SerializedServiceLocator
 	{
 		GameManager.GameResetted += OnGameReset;
 		ToolsManager.HintUsed += RandomlyFillCell;
+		GameManager.GameRestarted += OnGameRestart;
+
 	}
 
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
+		
 		ToolsManager.HintUsed -= RandomlyFillCell;
+		GameManager.GameRestarted += OnGameRestart;
+
 	}
 
 	#endregion
@@ -89,6 +100,13 @@ public class GridManager : SerializedServiceLocator
 	private void OnGameReset()
 	{
 		GetService<GridBuilder>().CreateGrid();
+		uncompletedCells = new List<CellController>();
+	}
+
+	private void OnGameRestart()
+	{
+		uncompletedCells = new List<CellController>();
+		GetService<GridBuilder>().RecreateGrid();
 	}
 
 	private void RandomlyFillCell()

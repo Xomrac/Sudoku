@@ -10,6 +10,7 @@ namespace _Scripts.Grid
 	{
 		public GameSettings gameSettings;
 		public static event Action GameResetted;
+		public static event Action GameRestarted;
 		public static event Action GameStarted;
 
 		[SerializeField] private GameObject loadingScreen;
@@ -53,6 +54,13 @@ namespace _Scripts.Grid
 		public void ResetGame()
 		{
 			GameResetted?.Invoke();
+			loseCanvas.gameObject.SetActive(false);
+			winCanvas.gameObject.SetActive(false);
+		}
+
+		public void RestartGame()
+		{
+			GameRestarted?.Invoke();
 			loseCanvas.gameObject.SetActive(false);
 			winCanvas.gameObject.SetActive(false);
 		}

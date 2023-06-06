@@ -22,6 +22,30 @@ public class ToolsManager : MonoBehaviour
     public static event Action HintUsed;
     public static event Action<bool> NotesClicked;
 
+    private void OnEnable()
+    {
+        GameManager.GameResetted += OnGameReset;
+        GameManager.GameRestarted += OnGameReset;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.GameResetted -= OnGameReset;
+        GameManager.GameRestarted -= OnGameReset;
+    }
+
+    private void OnGameReset()
+    {
+        SetupTools();
+    }
+    
+    private void SetupTools()
+    {
+        startingHintsAmount = GameManager.Instance.gameSettings.MaxHints;
+        notesOn = false;
+        HintClicked?.Invoke(startingHintsAmount);
+        NotesClicked?.Invoke(notesOn);
+    }
     private void Start()
     {
         startingHintsAmount = GameManager.Instance.gameSettings.MaxHints;
@@ -29,13 +53,13 @@ public class ToolsManager : MonoBehaviour
         HintClicked?.Invoke(startingHintsAmount);
         NotesClicked?.Invoke(notesOn);
 
-        undoButton.onClick.RemoveAllListeners();
+
         undoButton.onClick.AddListener(() => { ActionRecorder.Instance.Undo(); });
 
-        eraserButton.onClick.RemoveAllListeners();
+
         eraserButton.onClick.AddListener(() => { EraserClicked?.Invoke(); });
 
-        hintButton.onClick.RemoveAllListeners();
+
         hintButton.onClick.AddListener(() =>
         {
             if (startingHintsAmount <= 0) return;
@@ -44,7 +68,7 @@ public class ToolsManager : MonoBehaviour
             HintUsed?.Invoke();
         });
 
-        notesButton.onClick.RemoveAllListeners();
+
         notesButton.onClick.AddListener(() =>
         {
             notesOn = !notesOn;
