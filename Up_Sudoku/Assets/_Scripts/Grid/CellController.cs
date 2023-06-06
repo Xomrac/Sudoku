@@ -68,11 +68,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	{
 		PopulateDictionary();
 	}
-
-	private void Start()
-	{
-		// RemoveValue();
-	}
+	
 
 	public void SetInitialValue(int value)
 	{

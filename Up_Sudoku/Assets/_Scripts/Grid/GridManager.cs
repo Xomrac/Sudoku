@@ -73,13 +73,13 @@ public class GridManager : SerializedServiceLocator
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
-		ToolsManager.HintClicked += RandomlyFillCell;
+		ToolsManager.HintUsed += RandomlyFillCell;
 	}
 
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
-		ToolsManager.HintClicked -= RandomlyFillCell;
+		ToolsManager.HintUsed -= RandomlyFillCell;
 	}
 
 	#endregion

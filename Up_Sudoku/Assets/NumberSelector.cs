@@ -33,8 +33,8 @@ public class NumberSelector : MonoBehaviour
       ToolsManager.NotesClicked -= ToggleNotes;
    }
    
-   private void ToggleNotes()
+   private void ToggleNotes(bool active)
    {
-      notesActive = !notesActive;
+      notesActive = active;
    }
 }

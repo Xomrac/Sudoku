@@ -13,36 +13,46 @@ public class ToolsManager : MonoBehaviour
     [SerializeField] private Button hintButton;
     [SerializeField] private Button notesButton;
 
-    public static Action EraserClicked;
-    public static event Action HintClicked;
-    public static event Action NotesClicked;
-
-    [SerializeField] private TextMeshProUGUI notesStatus;
-    [SerializeField] private TextMeshProUGUI hintAmount;
 
     private bool notesOn;
-    
+    [SerializeField]private int startingHintsAmount;
+
+    public static Action EraserClicked;
+    public static event Action<int> HintClicked;
+    public static event Action HintUsed;
+    public static event Action<bool> NotesClicked;
+
     private void Start()
     {
+        startingHintsAmount = GameManager.Instance.gameSettings.MaxHints;
+        notesOn = false;
+        HintClicked?.Invoke(startingHintsAmount);
+        NotesClicked?.Invoke(notesOn);
+
         undoButton.onClick.RemoveAllListeners();
-        undoButton.onClick.AddListener(() => {ActionRecorder.Instance.Undo();});
-        
+        undoButton.onClick.AddListener(() => { ActionRecorder.Instance.Undo(); });
+
         eraserButton.onClick.RemoveAllListeners();
-        eraserButton.onClick.AddListener(()=>{EraserClicked?.Invoke();});
-        
+        eraserButton.onClick.AddListener(() => { EraserClicked?.Invoke(); });
+
         hintButton.onClick.RemoveAllListeners();
-        hintButton.onClick.AddListener(()=>{HintClicked?.Invoke();});
-        
+        hintButton.onClick.AddListener(() =>
+        {
+            if (startingHintsAmount <= 0) return;
+            startingHintsAmount--;
+            HintClicked?.Invoke(startingHintsAmount);
+            HintUsed?.Invoke();
+        });
+
         notesButton.onClick.RemoveAllListeners();
         notesButton.onClick.AddListener(() =>
         {
-            NotesClicked?.Invoke();
             notesOn = !notesOn;
-            notesStatus.text = notesOn ? "ON" : "OFF";
+            NotesClicked?.Invoke(notesOn);
         });
 
-        notesStatus.text = notesOn ? "ON" : "OFF";
-        hintAmount.text = $"{GameManager.Instance.gameSettings.MaxHints}";
+
     }
 
 }
+
