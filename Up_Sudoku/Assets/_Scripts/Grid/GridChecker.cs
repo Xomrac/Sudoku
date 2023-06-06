@@ -29,17 +29,24 @@ public class GridChecker : SerializedServiceComponent<GridManager>
 	private void OnEnable()
 	{
 		CellController.CellUpdated += CheckForCompletition;
+		GridBuilder.GridReady += ToggleChecks;
 	}
 	
 	private void OnDisable()
 	{
 		CellController.CellUpdated -= CheckForCompletition;
+		GridBuilder.GridReady -= ToggleChecks;
+
 	}
 
 	#endregion
 
 	#region ChecksMethods
-	
+
+	private void ToggleChecks()
+	{
+		canCheck = true;
+	}
 	public bool UnUsedInBox(int rowStart, int colStart, int num)
 	{
 		for (int i = 0; i < ServiceLocator.GetGridDimensions.squaresDimension; i++)

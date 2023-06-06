@@ -113,7 +113,6 @@ public class GridManager : SerializedServiceLocator
 	{
 		var randomIndex = Random.Range(0, uncompletedCells.Count);
 		var cellToResolve = uncompletedCells[randomIndex];
-		uncompletedCells.Remove(uncompletedCells[randomIndex]);
 		cellToResolve.AutoResolve();
 	}
 	
