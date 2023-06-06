@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using XomracUtilities.Patterns;
 
 namespace _Scripts.Grid
@@ -8,32 +9,36 @@ namespace _Scripts.Grid
 
 	public class CellHighlighter : ServiceComponent<CellController>
 	{
-		[SerializeField] private ThemePalette themePalette;
 
+		[SerializeField] private Image background;
+		
+		
 		private void OnEnable()
 		{
 			CellController.Clicked += HighLightCell;
 			GameManager.GameResetted += OnGameReset;
 			CellController.CellUpdated += HighLightCell;
-
 		}
 
 		private void OnDisable()
 		{
-			GameManager.GameResetted -= OnGameReset;
 			CellController.Clicked -= HighLightCell;
+			GameManager.GameResetted -= OnGameReset;
 			CellController.CellUpdated -= HighLightCell;
 		}
 
+		public void ResetColors()
+		{
+			background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor);
+		}
 		private void HighLightCell(CellController selectedCell)
 		{
-			
 			ResetColors();
 			HighlightRowsColumnsSquares(selectedCell);
 			HiglightSameValue(selectedCell);
 			if (selectedCell == ServiceLocator)
 			{
-				ServiceLocator.SetBackgroundColor(themePalette.SelectedCellColor);
+				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.selectedCellColor);
 			}
 		}
 
@@ -48,7 +53,7 @@ namespace _Scripts.Grid
 			
 			if (isInSameColumn || isInSameRow || isInSameSquare)
 			{
-				ServiceLocator.SetBackgroundColor(themePalette.ColRowSquaresCellsColor);
+				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.colRowSquareCellsColor);
 			}
 		}
 
@@ -58,7 +63,7 @@ namespace _Scripts.Grid
 
 			if (selectedCell.CurrentValue == ServiceLocator.CurrentValue)
 			{
-				ServiceLocator.SetBackgroundColor(themePalette.SameNumberColor);
+				background.color = ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.sameNumberCellsColor);
 			}
 		}
 
@@ -68,10 +73,7 @@ namespace _Scripts.Grid
 		}
 		
 
-		private void ResetColors()
-		{
-			ServiceLocator.SetBackgroundColor(themePalette.NormalCellsColor);
-		}
+		
 
 	}
 

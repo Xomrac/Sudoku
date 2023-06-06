@@ -24,8 +24,8 @@ namespace _Scripts.Grid
 		private void OnEnable()
 		{
 			ErrorsManager.GameLost+= DisplayLoseCanvas;
-			GridManager.GridReady += RemoveLoading;
-			GridManager.GameWon += DisplayWinCanvas;
+			GridBuilder.GridReady += RemoveLoading;
+			GridChecker.GameWon += DisplayWinCanvas;
 		}
 
 		public override void Awake()
@@ -37,9 +37,8 @@ namespace _Scripts.Grid
 		private void OnDisable()
 		{
 			ErrorsManager.GameLost-= DisplayLoseCanvas;
-			GridManager.GridReady -= RemoveLoading;
-			GridManager.GameWon -= DisplayWinCanvas;
-
+			GridBuilder.GridReady -= RemoveLoading;
+			GridChecker.GameWon -= DisplayWinCanvas;
 		}
 
 		private void DisplayWinCanvas()

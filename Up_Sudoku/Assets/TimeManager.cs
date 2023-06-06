@@ -14,26 +14,21 @@ public class TimeManager : MonoBehaviour
 
 	private float elapsedTime;
 	public float ElapsedTime => elapsedTime;
-
-	private void Start()
-	{
-		// elapsedTime = 0;
-		// Pause();
-	}
+	
 	private void OnEnable()
 	{
 		GameManager.GameResetted += OnGameReset;
 		ErrorsManager.GameLost += Pause;
-		GridManager.GameWon += Pause;
-		GridManager.GridReady += Resume;
+		GridChecker.GameWon += Pause;
+		GridBuilder.GridReady += Resume;
 	}
 
 	private void OnDisable()
 	{
 		GameManager.GameResetted -= OnGameReset;
 		ErrorsManager.GameLost -= Pause;
-		GridManager.GameWon -= Pause;
-		GridManager.GridReady -= Resume;
+		GridChecker.GameWon -= Pause;
+		GridBuilder.GridReady -= Resume;
 
 	}
 	

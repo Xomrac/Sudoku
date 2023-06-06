@@ -13,10 +13,6 @@ using XomracUtilities.Patterns;
 
 public class CellController : ServiceLocator, IPointerDownHandler
 {
-
-	[SerializeField] private ThemePalette theme;
-
-	
 	private int? currentValue;
 
 	public static event Action<CellController> Clicked;
@@ -26,8 +22,8 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	public static event Action<CellController> CellUpdated;
 	public static event Action<bool> ValueInsterted;
-	
-	
+
+	private bool editable = false;
 
 	public int? CurrentValue
 	{
@@ -35,10 +31,10 @@ public class CellController : ServiceLocator, IPointerDownHandler
 			currentValue = value;
 			valueText.text = value == null ? "" : $"{value}";
 			currentlyCompleted = value == correctValue;
-			valueText.color = theme.NeutralValuesColor;
+			valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.neutralValuesColor);
 			if (!GameManager.Instance.IsZenMode)
 			{
-				valueText.color = currentlyCompleted ? theme.CorrectValuesColor : theme.WrongValuesColor;
+				valueText.color = currentlyCompleted ? GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor) : GetService<CellThemer>().Theme.GetElementColor(ElementsNames.wrongValuesColor);
 				ValueInsterted?.Invoke(currentValue == correctValue);
 			}
 			CellUpdated?.Invoke(this);
@@ -53,8 +49,6 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	public CellNode node;
 
 	[SerializeField] private TextMeshProUGUI valueText;
-	[SerializeField] private Image background;
-	
 
 	private bool currentlyCompleted;
 	public bool CurrentlyCompleted => currentlyCompleted;
@@ -72,18 +66,20 @@ public class CellController : ServiceLocator, IPointerDownHandler
 
 	private void Awake()
 	{
-		RemoveValue();
 		PopulateDictionary();
 	}
 
-
+	private void Start()
+	{
+		// RemoveValue();
+	}
 
 	public void SetInitialValue(int value)
 	{
 		correctValue = value;
 		currentValue = correctValue;
 		valueText.text = $"{value}";
-		valueText.color = theme.InitialValuesColor;
+		valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.initialValuesColor);
 		currentlyCompleted = true;
 	}
 
@@ -101,6 +97,16 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		CellUpdated?.Invoke(this);
 	}
 
+	public void EraseValue()
+	{
+		currentValue = null;
+		valueText.text = "";
+		currentlyCompleted = false;
+		notesController?.EraseAllNotes();
+		editable = true;
+	}
+	
+
 	public void ReInsertPreviousValue(int? value)
 	{
 		if (!GameManager.Instance.IsZenMode && currentlyCompleted) return;
@@ -108,23 +114,18 @@ public class CellController : ServiceLocator, IPointerDownHandler
 		currentValue = value;
 		valueText.text = value == null ? "" : $"{value}";
 		currentlyCompleted = value == correctValue;
-		valueText.color = theme.NeutralValuesColor;
+		valueText.color = GetService<CellThemer>().Theme.GetElementColor(ElementsNames.neutralValuesColor);
 		if (!GameManager.Instance.IsZenMode)
 		{
-			valueText.color = currentlyCompleted ? theme.CorrectValuesColor : theme.WrongValuesColor;
+			valueText.color = currentlyCompleted ? GetService<CellThemer>().Theme.GetElementColor(ElementsNames.correctValuesColor) : GetService<CellThemer>().Theme.GetElementColor(ElementsNames.wrongValuesColor);
 		}
 		CellUpdated?.Invoke(this);
 	}
-
 	
-
-	public void SetBackgroundColor(Color backgroundColor)
-	{
-		background.color = backgroundColor;
-	}
-
 	public void OnValuePressed(int value, bool notes)
 	{
+		if (!editable) return;
+		
 		if (!notes)
 		{
 			ActionRecorder.Instance.Record(new InputValueAction(this,currentValue,value));
@@ -150,6 +151,7 @@ public class CellController : ServiceLocator, IPointerDownHandler
 	public override void PopulateDictionary()
 	{
 		services.Add(typeof(CellHighlighter), GetComponent<CellHighlighter>());
+		services.Add(typeof(CellThemer),GetComponent<CellThemer>());
 	}
 
 	
