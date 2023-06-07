@@ -54,9 +54,7 @@ namespace GameSystem
 
 		#endregion
 
-		#region Methods
-
-		public bool IsZenMode => gameRules.GameMode == GameMode.Zen;
+		#region Callbacks
 
 		private void OnGameWon()
 		{
@@ -70,6 +68,12 @@ namespace GameSystem
 			GameEnded?.Invoke(false);
 		}
 
+		#endregion
+
+		#region Methods
+
+		public bool IsZenMode => gameRules.GameMode == GameMode.Zen;
+		
 		public void ResetGame()
 		{
 			NewGameStarted?.Invoke(false);

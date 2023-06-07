@@ -33,9 +33,8 @@ namespace GameSystem
 		}
 
 		#endregion
-
-		#region Methods
-
+		
+		#region Callbacks
 		private void OnGameEnded(bool win)
 		{
 			winCanvas.gameObject.SetActive(win);
@@ -52,8 +51,10 @@ namespace GameSystem
 		{
 			loadingScreen.gameObject.SetActive(false);
 		}
-		
+		#endregion
 
+		#region Methods
+		
 		#endregion
 
 	}

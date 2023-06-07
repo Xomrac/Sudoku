@@ -14,12 +14,15 @@ namespace Grid.Cells
 	public class CellHighlighter : ServiceComponent<CellController>
 	{
 
+		#region Fields
+
 		[SerializeField] private Image background;
 		[SerializeField] private float colorTransitionTime=.2f;
 
-		
-		
-		
+		#endregion
+
+		#region LifeCycle
+
 		private void OnEnable()
 		{
 			CellController.CellClicked += OnCellClicked;
@@ -35,13 +38,12 @@ namespace Grid.Cells
 			GameManager.NewGameStarted -= OnNewGameStarted;
 
 		}
-		
-		
-		
-		public void ResetColors()
-		{
-			background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor), colorTransitionTime);
-		}
+
+		#endregion
+
+
+		#region Callbacks
+
 		private void OnCellClicked(CellController selectedCell)
 		{
 			ResetColors();
@@ -52,6 +54,22 @@ namespace Grid.Cells
 				background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.selectedCellColor),colorTransitionTime);
 			}
 		}
+		
+		private void OnNewGameStarted(bool newGrid)
+		{
+			ResetColors();
+		}
+
+		#endregion
+
+
+		#region Methods
+
+		public void ResetColors()
+		{
+			background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor), colorTransitionTime);
+		}
+		
 
 		private void HighlightRowsColumnsSquares(CellController selectedCell)
 		{
@@ -78,14 +96,7 @@ namespace Grid.Cells
 			}
 		}
 
-		private void OnNewGameStarted(bool newGrid)
-		{
-			ResetColors();
-		}
-		
-
-		
-
+		#endregion
 	}
 
 }

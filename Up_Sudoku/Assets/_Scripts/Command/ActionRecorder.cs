@@ -13,7 +13,6 @@ namespace Command
 
         #endregion
         
-        
         #region LifeCycle
 
         private void OnEnable()

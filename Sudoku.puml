@@ -3,169 +3,483 @@
 hide empty members
 skinparam linetype ortho
 
-
-Package Themes
+Package Audio
 {
-    class Theme<<S,violet>>
+    class AudioManager <<M,yellow,Singleton>>
     {
-        -currentCellColor : Color
-        -sameValueColor : Color
-        -relativesColor : Color
+        - gameWin : ScriptableAudio
+        - gameLost : ScriptableAudio
+        - sceneBackgroundMusic : ScriptableAudio
+        - musicSource : AudioSource
+        - effectsSource : AudioSource
+        - fadeDuration : float
+        --
+        - OnGameEnded(bool) : void
+        --
+        - PlayEffect(ScriptableAudio) : void
+    }
+    
+    class ScriptableAudio <<S,violet>>
+    {
+        + clip : AudioClip
+        + priority : int
+        + volume : float
+        + pitch : float
+        + stereoPan : float
+        + spatialBlend : float
+        + reverbZoneMix : float
+        
+        + Play(AudioSource) : void
+        + PlayOneShot(AudioSource) : void
     }
 }
 
+
+Package Command
+{
+    class ActionRecorder <<M,yellow,Singleton>>
+    {
+        - actions : Stack<BaseAction>
+        --
+        - OnNewGameStarted(bool) : void
+        --
+        + Record(BaseAction) : void
+        + Undo() : void
+    }
+    
+    abstract class BaseAction
+    {
+     # cell : CellController
+     
+     {abstract} Execute() : void
+     {abstract} Undo() : void
+    }
+    
+    class EraseAction
+    {
+        - previousValue : int?
+        - activeNotes : List<int>
+    }
+    
+    class InputNoteAction
+    {
+        - valueToInput : int
+    }
+    
+    class InputValueAction
+    {
+        - previousValue : int?
+        - valueToInput : int
+    }
+    
+    EraseAction --|> BaseAction
+    InputNoteAction --|> BaseAction
+    InputValueAction --|> BaseAction
+}
+
+Package Game_Settings
+{
+    class GameData<<static>>
+    {
+        +{static} gameRules : GameRules
+    } 
+    
+    enum GameMode
+    {
+        Zen
+        Classic
+    }
+    
+    class GameRules
+    {
+        + gameMode : GameMode
+        + blankCells : int
+        + maxErrors : int
+        + maxHints : int
+    }
+}
+
+Package Game_Stats
+{
+
+    class ErrorsTracker<<M,yellow,Service Component>>
+    {
+        - currentErrors : int
+        --
+        +{static} GameLost : Action
+        +{static} ErrorsChanged : Action<int> 
+        --
+        - OnNewGameStarted(bool) : void
+        - OnValueInserted(bool) : void   
+    }
+    
+    class GameStatsManager<<M,yellow,Service Locator>>
+    {
+    }
+    
+    class ScoreTracker<<M,yellow,Service Component>>
+    {
+        - pointsForCompletedCell : int
+        - currentScore : int
+        --
+        +{static} scoreChanged : Action<int>
+        --
+        - OnNewGameStarted(bool) : void
+        - OnValueInserted(bool) : void
+    }
+    
+    class StatField<<M,yellow>>
+    {
+        - statText : TextMeshProUGUI
+        - animationGrowEndValue : float
+        - animationSpeed : float
+        - animationEase : Ease
+        
+        + SetValue(string,bool) : void
+        - Animate() : void  
+    }
+    
+    class StatsDisplayer<<M,yellow>>
+    {
+        - modeField : StatField
+        - errorsField : StatField
+        - scoreField : StatField
+        - timeField : StatField
+        --
+        - OnNewGameStarted(bool) : void
+        - OnScoreChanged(int) : void
+        - OnErrorsChanged(int) : void
+        - OnTimeTicked(float) : void
+        --
+        - SetInitialValues() : void
+    }
+    
+    ErrorsTracker --> GameStatsManager
+    ScoreTracker --> GameStatsManager
+    
+}
+
+Package Game_System
+{
+    class GameManager<<M,yellow,Singleton>>
+    {
+        - gameRules : GameRules
+        - menuScene : string
+        --
+        +{static} NewGameStarted : Action<bool>
+        +{static} GameStarted : Action
+        +{static} GamePaused : Action
+        +{static} GameEnded : Action<bool>
+        --
+        - OnGameWon() : void
+        - OnGameLost() : void
+        --
+        + IsZenMode() : bool
+        + ResetGame() : void
+        + RestartGame() : void
+        + ReturnToMenu() : void
+    }
+    
+    class PanelsManager<<M,yellow>>
+    {
+        - loadingCanvas : Canvas
+        - winCanvas : Canvas
+        - loseCanvas : Canvas
+        --
+        - OnGameEnded(bool) : void
+        - OnNewGameStarted(bool) : void
+        - OnGridReady() : void
+    }
+    
+    class TimeManager<<M,yellow>>
+    {
+        - elapsedTime : float
+        - paused : bool
+        --
+        +{static} TimeTicked : Action<float>
+        +{static} TimePaused : Action<float>
+        +{static} TimeResumed : Action<float>
+        --
+        - OnNewGameStarted(bool) : void
+        --
+        - Pause() : void
+        - Resume() : void
+    }
+}
+
+Package Game_Tools
+{
+    class NumberSelector<<M,yellow>>
+    {
+        - selectableNumber : int
+        - numberText : TextMeshProUGUI
+        - button : Button
+        - notesActive : bool
+        --
+        +{static} Number Selected : Action<int,bool>
+        --
+        - OnNotesClicked(bool) : void
+    }
+    
+    class ToolsDisplayer<<M,yellow>>
+    {
+        - notesStatus : TextMeshProUGUI
+        - hintsAmount : TextMeshProUGUI
+        --
+        - OnNotesClicked(bool) : void
+        - OnHintsClicked(int) : void
+    }
+    
+    class ToolsManager<<M,yellow>>
+    {
+        - notesToggleEffect : ScriptableAudio
+        - undoButton : Button
+        - eraserButton : Button
+        - notesButton : Button
+        - hintsButton : Button
+        - startingHintsAmount : int
+        - notesOn : bool
+        --
+        +{static} EraserClicked : Action
+        +{static} HintClicked : Action<int>
+        +{static} HintUsed : Action
+        +{static} NotesClicked : Action<bool>
+        --
+        - OnNewGameStarted(bool) : void
+        --
+        - SetupTools() : void 
+    }
+}
 
 Package Grid
 {
-    class GridBuilder <<M, yellow>>
+    class GridBuilder<<M,yellow,Service Component>>
     {
-    }
-    class GridManager <<M, yellow, ServiceLocator>>
-    {
-       - grid : CellController[,]
-       - placedNumbers : Dictionary <Int, Int[,]>
-    }
-    
-    class RowsChecker<<M,yellow>>
-    {
-        -rows : Dictionary <Int, List<CellsController>)>
-    }
-    
-    class ColumnsChecker<<M,yellow>>
-    {
-        -columns : Dictionary <Int, List<CellsController>)>
+        - gridParent : RectTransform
+        --
+        +{static} GridReady : Action
+        --
+        + OnGameStarted() : void
+        --
+        - FillBox(int,int) : void
+        - FillDiagonal() : void
+        - FillRemaining(int,int) : bool
+        - EraseRandomCells(int) : void
+        + RecreateGrid() : void
     }
     
-    class SquaresChecker<<M,yellow>>
+    class GridChecker<<M,yellow, Service Component>>
     {
-        -squares : Dictionary <Int, List<CellsController>)>
+        - rows : Dictionary<int,List<CellController>
+        - columns : Dictionary<int,List<CellController>
+        - squares : Dictionary<int,List<CellController>
+        --
+        +{static} GameWon : Action
+        --
+        + UnUsedInBox(int,int,int) : bool
+        - UnUsedInRow(int,int) : bool
+        - UnUsedInColumns(int,int) : bool
+        + CheckIfSafe(int,int,int) : bool
+        - CheckForCompletition(CellController) : void
     }
     
-    class CellsHighlighter<<M, yellow, ServiceComponents>>
+    class GridManager<<M,yellow,Service Locator>>
     {
-        - colorPalette : Theme
-        - HighlightCells (List<CellsController>) : void
+        - GRID_DIMENSION : int
+        - SQUARES_DIMENSION : int
+        + cells : CellController[,]
+        - unCompletedCells : List<CellController>
+        + startingValues : List<int?>
+        --
+        - OnNewGameStarted(bool) : void
+        - OnHintUsed() : void
     }
     
-    interface ICheckable
-    {
-        + Check (int) : bool
-    }
-    
-    Package Cells
-    {
-        class CellNode
-        {
-            - coords : (row: int, column : int, square : int)
-        }
-        
-        class CellManager <<M, yellow, ServiceLocator>>
-        {
-            - node : CellNode
-            - correctNumber : int
-            - currentNumber : int?
-            - displayText : TextMeshProUGUI
-            - background : Image
-        }
-        
-        class CellNotesController <<M, yellow, ServiceComponent>>
-        {
-            - notes : Dictionary <<int, TextMeshProUGUI>>
-            + ToggleNote(int) : void
-        }
-    }
-
+    GridBuilder --> GridManager
+    GridChecker --> GridManager
 }
 
-
-
-Package Stats
+Package Grid.Cells
 {
 
-    class StatsManager <<M, yellow, ServiceLocator>>
+    class CellController<<M,yellow,Service Locator>>
     {
+        - node : CellNode
+        - editable : bool
+        - correctValue : int
+        - completed : bool
+        - animationGrowEndValue : float
+        - animationSpeed : float
+        - animationEase : Ease
+        --
+        +{static} CellClicked : Action<CellController>
+        +{static} CellUpdates : Action<CellController>
+        --
+        - Animate() : void
+        + RestorePreviousValue(int?) : void
+        + SetCompletition(bool, bool) : void
     }
-    class ScoreController <<M, yellow, ServiceComponent>>
+    
+    class CellDisplayer<<M,yellow,Service Component>>
     {
+        - animationGrowEndValue : float
+        - animationSpeed : float
+        - animationEase : Ease
+        - valueText : TextMeshProUGUI
+        --
+        - Animate() : void
+        + DisplayValue(int?,Color,bool) : void
+        + DisplayValue(int?,Color) : void
+        + HideValue() : void
+        + RemoveText() : void
+        + SetText(int?,Color) : void
     }
-    class GameTimeController <<M, yellow, ServiceComponent>>
+    
+    class CellHighlighter<<M,yellow,Service Component>>
     {
+        - cellBackground : Image
+        - colorAnimationSpeed : float
+        --
+        - OnCellClicked(CellController) : void
+        - OnNewGameStarted(bool) : void
+        --
+        + ResetColors() : void
+        - HighlightRowsColumnsSquares(CellController) : void
+        - HighlightSameValue(CellController) : void
     }
-    class ErrorsController <<M, yellow, ServiceComponent>>
+    
+    class CellInput<<M,yellow,Service Component>>
     {
+        - currentValue : int?
+        - neutralInput : ScriptableAudio
+        - correctInput : ScriptableAudio
+        - wrongInput : ScriptableAudio
+        - eraseInput : ScriptableAudio
+        - hintInput : ScriptableAudio
+        --
+        +{static} ValueInserted : Action<bool>
+        --
+        + OnValuePressed(int,bool) : void
+        + OnEraserPressed() : void
+        --
+        + InputValue(int) : void
+        + SetInitialValue(int) : void
+        + SetCorrectValue() : void
+        + RestorePreviousValue(int?) : void
+        + RestoreInitialValue(int?) : void
+        + EraseValue() : void
+        + RemoveValue() : void
     }
+    
+    class CellNode
+    {
+        + cellIndex : int
+        + cellRow : int
+        + cellColumn : int
+        + cellSquare : int
+    }
+    
+    class CellNotesController<<M,yellow,Service Component>>
+    {
+        - notes : Dictionary<int,GameObject>
+        - animationGrowEndValue : float
+        - animationSpeed : float
+        - animationEase : Ease
+        - notesParent : Transform
+        --
+        + GetActiveNotes() : List<int>
+        + ToggleNote(int) : void
+        - Animate(GameObject,bool) : void
+        + ActivatesNotes(List<int>) : void
+        + DisableAllNotes() : void
+        + EraseAllNotes() : void
+    }
+    
+    class CellThemer<<M,yellow,Service Component>>
+    {
+        - theme : ThemePalette
+        --
+        + OnThemeChanging() : void
+        + OnThemeChanged(ThemePalette) : void
+    }
+    
+    CellThemer --> CellController
+    CellInput --> CellController
+    CellHighlighter --> CellController
+    CellDisplayer --> CellController
+    CellNotesController -> CellController
     
 }
 
-Package Actions
+Package MainMenu
 {
-    class ActionsController <<M, yellow>>
+    class GameRulesSetter<<M,yellow>>
     {
+        - defaultRules : GameRules
+        - blankCellsSlider : Slider
+        - blankCellsInput : TMP_InputField
+        - hintsSlider : Slider
+        - hintsInput : TMP_InputField
+        - gameModeButton : Button
+        - buttonText : TextMeshProUGUI
+        - errorsSettingsGroup : RectTransform
+        - errorsSlider : Slider
+        - errorsInput : TMP_InputField
+        - startGameButton : Button
+        --
+        - SetupValues() : void
+        - SetupElements() : void
     }
     
-    class NumberSelector <<M, yellow>>
+    class MenuFlowManager<<M,yellow>>
     {
+        - currentOpenTab : RectTransform
+        - gameSceneName : string
+        --
+        + ChangeTab(RectTransform) : void
+        + StartGame() : void
+        + QuitGame() : void
     }
 }
 
-Package StateMachine
+Package Themes
 {
-    enum GameStates
+    class ElementsNames<<static>>
     {
-    
-    }
-    
-    class GameStateManager <<M, yellow>>
-    {
-    
-    }
-}
-
-Package Settings
-{
-    class DifficultySettings<<S,violet>>
-    {
-        +difficultyDisplayName : string
-        +maxErrors : int
-        +timeLimit : float
-        +filledSquares : int
-    }
-}
-
-Package Debug
-{
-    class DebugManager<<M, yellow, Singleton>>
-    {
-    }
-}
-
-Package General 
-{
-
-    class gameManager<<M, yellow>>
-    {
-        +difficulty : DifficultySettings
+        +{static} elementKey : string
+        ...
+        ...
+        ...
     }
     
-    class SelectionManager<<M, yellow, Singleton>>
+    class ThemeManager<<M,yellow>>
     {
-        +CurrentSelectedCell : CellController
+        - themes : List<ThemePalette>
+        - currentTheme : ThemePalette
+        --
+        +{static} ThemeChanged : Action<ThemePalette>
+        +{static} ThemeChanging : Action
+        --
+        - ChangeTheme(ThemePalette) : void
+    }
+    
+    class ThemePalette<<S,violet>>
+    {
+        + elementsColor : Dictionary<string,Color>
+        + backupColor : Color
+        --
+        + GetElementColor(string) : Color
+    }
+    
+    class UIElementThemer<<M,yellow>>
+    {
+        - elementToRecolor : MaskableGraphic
+        + elementKey : string
+        --
+        + OnThemeChanged(ThemePalette) : void
     }
 }
 
-Package Time
-{
-    class TimeController <<M, yellow>>
-    {
-        + <<event>> Tick : Action<float>
-        + <<event>> Paused : Action<float>
-        + <<event>> Resumed : Action<float>
-        - current : float
-        + Pause() : void
-        + Resume() : void
-        + GetCurrent() : float
-    }
-}
 
 
 @enduml

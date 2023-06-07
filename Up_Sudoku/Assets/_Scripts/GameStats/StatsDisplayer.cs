@@ -19,7 +19,6 @@ namespace GameStats
         
         #endregion
 
-
         #region LifeCycle
 
         private void Start()

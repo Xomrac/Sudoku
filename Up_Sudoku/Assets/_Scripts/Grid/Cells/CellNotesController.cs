@@ -13,9 +13,16 @@ namespace Grid.Cells
 
 	public class CellNotesController : ServiceComponent<CellController>
 	{
+
+		#region Fields
+
 		[SerializeField] private Dictionary<int, GameObject> notes;
 		[SerializeField] private float growSpeed = .2f;
 		[SerializeField] private Transform notesParent;
+
+		#endregion
+
+		#region LifeCycle
 
 		private void Awake()
 		{
@@ -27,17 +34,21 @@ namespace Grid.Cells
 				index++;
 			}
 		}
-
-		public List<int> GetActiveNotes()
-		{
-			return (from pair in notes where pair.Value.activeSelf select pair.Key).ToList();
-		}
-
+		
 		private void Start()
 		{
 			DisableAllNotes();
 		}
 
+		#endregion
+
+		#region Methods
+
+		public List<int> GetActiveNotes()
+		{
+			return (from pair in notes where pair.Value.activeSelf select pair.Key).ToList();
+		}
+		
 		public void ToggleNote(int value)
 		{
 			var note = notes[value].gameObject;
@@ -86,6 +97,10 @@ namespace Grid.Cells
 				AnimateNote(pair.Value, false);
 			}
 		}
+
+		#endregion
+
+		
 
 	}
 
