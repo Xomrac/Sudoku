@@ -1,21 +1,34 @@
-public class InputValueAction : BaseAction
+using Grid.Cells;
+
+namespace Command
 {
-	private int valueToInput;
-	private int? previousValue;
-
-	public override void Execute()
+	public class InputValueAction : BaseAction
 	{
-		cell.CurrentValue = valueToInput;
-	}
+		#region Fields
 
-	public override void Undo()
-	{
-		cell.ReInsertPreviousValue(previousValue);
-	}
+		private readonly int valueToInput;
+		private readonly int? previousValue;
 
-	public InputValueAction(CellController cell, int? currentValue, int valueToInput) : base(cell)
-	{
-		this.valueToInput = valueToInput;
-		previousValue = currentValue;
+		#endregion
+
+		#region Overrides
+
+		public InputValueAction(CellController cell, int? currentValue, int valueToInput) : base(cell)
+		{
+			this.valueToInput = valueToInput;
+			previousValue = currentValue;
+		}
+
+		public override void Execute()
+		{
+			cell.InputValue(valueToInput);
+		}
+
+		public override void Undo()
+		{
+			cell.RestorePreviousValue(previousValue);
+		}
+		
+		#endregion
 	}
 }

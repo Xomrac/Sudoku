@@ -1,18 +1,34 @@
-public class InputNoteAction : BaseAction
+
+using Grid.Cells;
+
+namespace Command
 {
-	private int valueToInput;
-	public override void Execute()
+	public class InputNoteAction : BaseAction
 	{
-		cell.NotesController.ToggleNote(valueToInput);
-	}
 
-	public override void Undo()
-	{
-		cell.NotesController.ToggleNote(valueToInput);
-	}
+		#region Fields
+		
+		private readonly int valueToInput;
 
-	public InputNoteAction(CellController cell, int valueToInput) : base(cell)
-	{
-		this.valueToInput = valueToInput;
+		#endregion
+
+		#region Overrides
+		
+		public InputNoteAction(CellController cell, int valueToInput) : base(cell)
+		{
+			this.valueToInput = valueToInput;
+		}
+		
+		public override void Execute()
+		{
+			cell.GetService<CellNotesController>()?.ToggleNote(valueToInput);
+		}
+
+		public override void Undo()
+		{
+			cell.GetService<CellNotesController>().ToggleNote(valueToInput);
+		}
+		
+		#endregion
 	}
 }

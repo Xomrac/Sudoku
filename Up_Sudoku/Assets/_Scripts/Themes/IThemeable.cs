@@ -1,9 +1,16 @@
+using Themes;
+
 namespace _Scripts.Grid
 {
 
-	public interface IThemeable
+	namespace Themes
 	{
-		public void ApplyTheme(ThemePalette newTheme);
+
+		public interface IThemeable
+		{
+			public void ApplyTheme(ThemePalette newTheme);
+		}
+
 	}
 
 }

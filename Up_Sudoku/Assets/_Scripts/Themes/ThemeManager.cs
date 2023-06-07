@@ -5,22 +5,32 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using XomracUtilities.Extensions;
 
-namespace _Scripts.Grid
+namespace Themes
 {
 
 	public class ThemeManager : MonoBehaviour
 	{
-		public List<ThemePalette> themes;
-		private ThemePalette currentTheme;
 
+		#region Fields
+
+		[SerializeField] private List<ThemePalette> themes;
+		private ThemePalette currentTheme;
 		public static event Action<ThemePalette> themeChanged;
-		public static event Action ThemeChanging; 
+		public static event Action ThemeChanging;
+
+		#endregion
+
+		#region LifeCycle
 
 		private void Start()
 		{
 			currentTheme = themes.First();
 			ChangeTheme(themes.First());
 		}
+
+		#endregion
+
+		#region Editor
 
 		[Button]
 		private void ApplyCurrentTheme()
@@ -29,12 +39,19 @@ namespace _Scripts.Grid
 			themeChanged?.Invoke(currentTheme);
 		}
 
-		public void ChangeTheme(ThemePalette newTheme)
+		#endregion
+
+		#region Methods
+
+		private void ChangeTheme(ThemePalette newTheme)
 		{
 			currentTheme = newTheme;
 			ThemeChanging?.Invoke();
 			themeChanged?.Invoke(newTheme);
 		}
+
+		#endregion
+
 	}
 
 }

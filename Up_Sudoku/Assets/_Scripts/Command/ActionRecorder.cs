@@ -1,24 +1,58 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using GameSystem;
 using XomracUtilities.Patterns;
 
-public class ActionRecorder : Singleton<ActionRecorder>
+namespace Command
 {
-
-    public Stack<BaseAction> actions = new();
-    public void Record(BaseAction action)
+    public class ActionRecorder : Singleton<ActionRecorder>
     {
-        actions.Push(action);
-        action.Execute();
-    }
 
-    public void Undo()
-    {
-        if (actions.Count>0)
+        #region Fields
+
+        private Stack<BaseAction> actions = new();
+
+        #endregion
+        
+        
+        #region LifeCycle
+
+        private void OnEnable()
         {
-            var action = actions.Pop();
-            action.Undo();
+            GameManager.NewGameStarted += OnNewGameStarted;
         }
+        
+        private void OnDisable()
+        {
+            GameManager.NewGameStarted -= OnNewGameStarted;
+        }
+
+        #endregion
+
+        #region Callbacks
+
+        private void OnNewGameStarted(bool newGrid)
+        {
+            actions = new Stack<BaseAction>();
+        }
+
+        #endregion
+
+        #region Methods
+        
+        public void Record(BaseAction action)
+        {
+            actions.Push(action);
+            action.Execute();
+        }
+
+        public void Undo()
+        {
+            if (actions.TryPop(out BaseAction action))
+            {
+                action.Undo();
+            }
+        }
+        
+        #endregion
     }
 }

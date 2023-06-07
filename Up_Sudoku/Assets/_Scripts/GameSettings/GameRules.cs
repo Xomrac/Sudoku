@@ -2,18 +2,13 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace _Scripts
+namespace GameSettings
 {
-
-	public enum GameMode
-	{
-		Zen,
-		Classic
-	}
-	
 	[Serializable]
-	public class GameSettings
+	public class GameRules
 	{
+		#region Fields
+
 		[SerializeField]private GameMode gameMode;
 		public GameMode GameMode
 		{
@@ -42,13 +37,19 @@ namespace _Scripts
 			set => maxHints = value;
 		}
 
-		public GameSettings(GameMode mode, int cells, int errors, int hints)
+		#endregion
+
+		#region Methods
+
+		public GameRules(GameMode mode, int cells, int errors, int hints)
 		{
 			gameMode = mode;
 			blankCells = cells;
 			maxErrors = errors;
 			maxHints = hints;
 		}
+
+		#endregion
 	}
 
 }

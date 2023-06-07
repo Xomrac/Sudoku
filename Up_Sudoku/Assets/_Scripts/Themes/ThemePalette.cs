@@ -2,24 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using _Scripts.Grid.Themes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace _Scripts.Grid
+namespace Themes
 {
 
 	[CreateAssetMenu(fileName = "Theme_", menuName = "Themes/Palette")]
 	public class ThemePalette : SerializedScriptableObject
 	{
+
+		#region Fields
+
 		[DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.OneLine,KeyLabel = "Element Name",ValueLabel = "Element Color")]
-		[SerializeField] private Dictionary<string,Color> elementsColor= new Dictionary<string, Color>();
+		[SerializeField] private Dictionary<string,Color> elementsColor= new();
 		[SerializeField] private Color backupColor=Color.white;
 
-		public Color GetElementColor(string key)
-		{
-			return elementsColor.TryGetValue(key, out Color value) ? value : backupColor;
-		}
+		#endregion
+
+		#region Editor
 
 #if UNITY_EDITOR
 
@@ -49,6 +52,20 @@ namespace _Scripts.Grid
 			return props.Select(prop => (string)prop.GetValue(null)).ToList();
 		}
 #endif
+
+		#endregion
+
+		#region Methods
+
+		public Color GetElementColor(string key)
+		{
+			return elementsColor.TryGetValue(key, out Color value) ? value : backupColor;
+		}
+
+		#endregion
+		
+
+
 		
 		
 

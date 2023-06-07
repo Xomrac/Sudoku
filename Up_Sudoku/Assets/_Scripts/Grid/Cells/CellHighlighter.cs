@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using _Scripts.Grid;
+using _Scripts.Grid.Themes;
 using DG.Tweening;
+using GameSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using XomracUtilities.Patterns;
 
-namespace _Scripts.Grid
+namespace Grid.Cells
 {
 
 	public class CellHighlighter : ServiceComponent<CellController>
@@ -19,19 +22,17 @@ namespace _Scripts.Grid
 		
 		private void OnEnable()
 		{
-			CellController.Clicked += HighLightCell;
-			GameManager.GameResetted += OnGameReset;
-			CellController.CellUpdated += HighLightCell;
-			GameManager.GameRestarted += OnGameReset;
+			CellController.CellClicked += OnCellClicked;
+			CellController.CellUpdated += OnCellClicked;
+			GameManager.NewGameStarted += OnNewGameStarted;
 
 		}
 
 		private void OnDisable()
 		{
-			CellController.Clicked -= HighLightCell;
-			GameManager.GameResetted -= OnGameReset;
-			CellController.CellUpdated -= HighLightCell;
-			GameManager.GameRestarted -= OnGameReset;
+			CellController.CellClicked -= OnCellClicked;
+			CellController.CellUpdated -= OnCellClicked;
+			GameManager.NewGameStarted -= OnNewGameStarted;
 
 		}
 		
@@ -41,7 +42,7 @@ namespace _Scripts.Grid
 		{
 			background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.normalCellsColor), colorTransitionTime);
 		}
-		private void HighLightCell(CellController selectedCell)
+		private void OnCellClicked(CellController selectedCell)
 		{
 			ResetColors();
 			HighlightRowsColumnsSquares(selectedCell);
@@ -56,9 +57,9 @@ namespace _Scripts.Grid
 		{
 			if (selectedCell == ServiceLocator) return;
 			
-			bool isInSameRow = ServiceLocator.node.CellRow == selectedCell.node.CellRow;
-			bool isInSameColumn = ServiceLocator.node.CellColumn == selectedCell.node.CellColumn;
-			bool isInSameSquare = ServiceLocator.node.CellSquare == selectedCell.node.CellSquare;
+			bool isInSameRow = ServiceLocator.Node.CellRow == selectedCell.Node.CellRow;
+			bool isInSameColumn = ServiceLocator.Node.CellColumn == selectedCell.Node.CellColumn;
+			bool isInSameSquare = ServiceLocator.Node.CellSquare == selectedCell.Node.CellSquare;
 
 			
 			if (isInSameColumn || isInSameRow || isInSameSquare)
@@ -69,15 +70,15 @@ namespace _Scripts.Grid
 
 		private void HiglightSameValue(CellController selectedCell)
 		{
-			if (!selectedCell.CurrentValue.HasValue) return;
+			if (!selectedCell.GetService<CellInput>().CurrentValue.HasValue) return;
 
-			if (selectedCell.CurrentValue == ServiceLocator.CurrentValue)
+			if (selectedCell.GetService<CellInput>().CurrentValue == ServiceLocator.GetService<CellInput>().CurrentValue)
 			{
 				background.DOColor(ServiceLocator.GetService<CellThemer>().Theme.GetElementColor(ElementsNames.sameNumberCellsColor),colorTransitionTime);
 			}
 		}
 
-		private void OnGameReset()
+		private void OnNewGameStarted(bool newGrid)
 		{
 			ResetColors();
 		}

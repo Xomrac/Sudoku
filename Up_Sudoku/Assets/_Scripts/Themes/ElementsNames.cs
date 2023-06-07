@@ -1,7 +1,9 @@
 namespace _Scripts.Grid
 {
 
-	public static class ElementsNames
+	namespace Themes
+	{
+		public static class ElementsNames
 	{
 
 		#region TextValues
@@ -11,7 +13,7 @@ namespace _Scripts.Grid
 		public static readonly string wrongValuesColor = $"002_WrongValuesColor";
 		public static readonly string initialValuesColor = $"003_InitialValuesColor";
 		public static readonly string notesColor = $"004_NotesColor";
-		
+
 		#endregion
 
 		#region CellsBackground
@@ -20,7 +22,7 @@ namespace _Scripts.Grid
 		public static readonly string selectedCellColor = $"006_SelectedCellColor";
 		public static readonly string colRowSquareCellsColor = $"007_ColRowSquareCellsColor";
 		public static readonly string sameNumberCellsColor = $"008_SameNumberCellsColor";
-		
+
 		#endregion
 
 		#region UIBackgrounds
@@ -31,22 +33,23 @@ namespace _Scripts.Grid
 		public static readonly string statsBackgroundColor = $"012_StatsBackgroundColor";
 		public static readonly string toolsBackgroundColor = $"013_ToolsBackgroundColor";
 		public static readonly string disksBackground = $"017_DisksBackground";
-		
+
 		#endregion
-		
+
 		#region UItexts
 
 		public static readonly string minorUITexts = $"014_MinorUITexts";
 		public static readonly string majorUITexts = $"015_MajorUITexts";
-		
+
 		#endregion
-		
+
 		#region UItexts
 
 		public static readonly string UIButtons = $"016_GeneralButtons";
 
 		#endregion
 
+	}
 	}
 
 }

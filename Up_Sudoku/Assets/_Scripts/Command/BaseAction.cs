@@ -1,13 +1,26 @@
-public abstract class BaseAction
+using Grid.Cells;
+
+namespace Command
 {
-	protected CellController cell;
-	public abstract void Execute();
-
-	public abstract void Undo();
-
-	protected BaseAction(CellController cell)
+	public abstract class BaseAction
 	{
-		this.cell = cell;
+		#region Fields
+
+		protected CellController cell;
+
+		#endregion
+
+		#region Methods
+
+		protected BaseAction(CellController cell)
+		{
+			this.cell = cell;
+		}
+
+		public abstract void Execute();
+
+		public abstract void Undo();
+
+		#endregion
 	}
-    
 }

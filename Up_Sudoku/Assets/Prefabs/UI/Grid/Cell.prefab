@@ -1003,6 +1003,8 @@ GameObject:
   - component: {fileID: 5497650916905768120}
   - component: {fileID: 3651796958554558216}
   - component: {fileID: 1440366856325335591}
+  - component: {fileID: 9098012700416559723}
+  - component: {fileID: 7446175699175154095}
   m_Layer: 5
   m_Name: Cell
   m_TagString: Untagged
@@ -1045,22 +1047,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1338eadf7541d734c8e0067a31b5cdf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neutralInput: {fileID: 11400000, guid: d6385a3eef525f8489da9642159c859e, type: 2}
-  correctInput: {fileID: 11400000, guid: 50171ccb8f30f78488b3758604c46e6c, type: 2}
-  wrongInput: {fileID: 11400000, guid: 4a5aeb932ed280b4fb4d2a249e647418, type: 2}
-  eraseInput: {fileID: 11400000, guid: 7140c384fc619504289d0c56b8669c76, type: 2}
-  hintInput: {fileID: 11400000, guid: 013ac06b96e37b54983faa65a208d5d3, type: 2}
-  notesController: {fileID: 3651796958554558216}
   growEndValue: 1.1
   growSpeed: 0.2
   ease: 6
-  correctValue: 0
-  node:
-    cellIndex: 0
-    cellRow: 0
-    cellColumn: 0
-    cellSquare: 0
-  valueText: {fileID: 8638215513932371416}
+  currentlyCompleted: 0
 --- !u!114 &5497650916905768120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,6 +1092,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theme: {fileID: 11400000, guid: a90098417ab3186448f75e9cc82a7d52, type: 2}
+--- !u!114 &9098012700416559723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648805460282607103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c117ce35a289487c9fc28dae92b73d8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  neutralInput: {fileID: 11400000, guid: d6385a3eef525f8489da9642159c859e, type: 2}
+  correctInput: {fileID: 11400000, guid: 50171ccb8f30f78488b3758604c46e6c, type: 2}
+  wrongInput: {fileID: 11400000, guid: 4a5aeb932ed280b4fb4d2a249e647418, type: 2}
+  eraseInput: {fileID: 11400000, guid: 7140c384fc619504289d0c56b8669c76, type: 2}
+  hintInput: {fileID: 11400000, guid: 013ac06b96e37b54983faa65a208d5d3, type: 2}
+--- !u!114 &7446175699175154095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648805460282607103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea6e32b29224e0ba1981cf43ca7a259, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  growEndValue: 1.1
+  growSpeed: 0.2
+  ease: 1
+  valueText: {fileID: 8638215513932371416}
 --- !u!1 &7888684174448007094
 GameObject:
   m_ObjectHideFlags: 0

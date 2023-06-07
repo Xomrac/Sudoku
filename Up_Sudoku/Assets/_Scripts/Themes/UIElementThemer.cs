@@ -1,18 +1,23 @@
 using System;
+using _Scripts.Grid.Themes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Scripts.Grid
+namespace Themes
 {
 
 	public class UIElementThemer : MonoBehaviour,IThemeable
 	{
+
+		#region Fields
+
 		private MaskableGraphic elementToRecolor;
 		public string elementKey;
 
-		
-		private TextMeshProUGUI elementText;
+		#endregion
+
+		#region LifeCycle
 
 		private void Awake()
 		{
@@ -29,10 +34,17 @@ namespace _Scripts.Grid
 			ThemeManager.themeChanged -= ApplyTheme;
 		}
 
+		#endregion
+
+		#region Methods
+
 		public void ApplyTheme(ThemePalette theme)
 		{
 			elementToRecolor.color = theme.GetElementColor(elementKey);
 		}
+
+		#endregion
+		
 	}
 
 }

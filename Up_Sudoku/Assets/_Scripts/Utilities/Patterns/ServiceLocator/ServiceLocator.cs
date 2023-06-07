@@ -16,6 +16,20 @@ namespace XomracUtilities.Patterns
 			return (T)services[typeof(T)];
 		}
 		
+		public bool TryGetService<T>(out T service) where T : ServiceComponent
+		{
+			if (services.ContainsKey(typeof(T)))
+			{
+				if (services[typeof(T)]!=null)
+				{
+					service = (T)services[typeof(T)];
+					return true;
+				}
+			}
+			service = null;
+			return false;
+		}
+		
 		public T GetEnabledService<T>() where T : ServiceComponent
 		{
 			if (services[typeof(T)]!=null && services[typeof(T)].enabled )
