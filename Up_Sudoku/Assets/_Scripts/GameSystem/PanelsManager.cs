@@ -20,27 +20,35 @@ namespace GameSystem
 		#region LifeCycle
 		private void OnEnable()
 		{
-			GameManager.GameEnded += DisplayEndgamePanel;
-			GridBuilder.GridReady += RemoveLoadingPanel;
+			GameManager.GameEnded += OnGameEnded;
+			GridBuilder.GridReady += OnGridReady;
+			GameManager.NewGameStarted += OnNewGameStarted;
 		}
 
 		private void OnDisable()
 		{
-			GameManager.GameEnded -= DisplayEndgamePanel;
-			GridBuilder.GridReady -= RemoveLoadingPanel;
+			GameManager.GameEnded -= OnGameEnded;
+			GridBuilder.GridReady -= OnGridReady;
+			GameManager.NewGameStarted -= OnNewGameStarted;
 		}
 
 		#endregion
 
 		#region Methods
 
-		private void DisplayEndgamePanel(bool win)
+		private void OnGameEnded(bool win)
 		{
 			winCanvas.gameObject.SetActive(win);
 			loseCanvas.gameObject.SetActive(!win);
 		}
 
-		private void RemoveLoadingPanel()
+		private void OnNewGameStarted(bool newGrid)
+		{
+			winCanvas.gameObject.SetActive(false);
+			loseCanvas.gameObject.SetActive(false);
+		}
+
+		private void OnGridReady()
 		{
 			loadingScreen.gameObject.SetActive(false);
 		}
